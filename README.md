@@ -20,14 +20,24 @@
 
 Кто такие отладчики?
 
-[pdb (Python Debugger)](./debuggers/pdb.md) \
-[print и logging](./debuggers/print-logging.md) \
-[Pycharm](./debuggers/pycharm.md) \
-[VS Code](./debuggers/vscode.md) \
-[IPython](./debuggers/ipython.md) \
-[Jupyter Notebook](./debuggers/jupyter-notebook.md) \
-[Eclipse с PyDev](./debuggers/eclipse-pydev.md) \
-[pytest](./debuggers/pytest.md) \
+[pdb (Python Debugger)](./debuggers/pdb.md)
+
+[print](./debuggers/print.md)
+
+[logging](./debuggers/logging.md)
+
+[Pycharm](./debuggers/pycharm.md)
+
+[VS Code](./debuggers/vscode.md)
+
+[IPython](./debuggers/ipython.md)
+
+[Jupyter Notebook](./debuggers/jupyter-notebook.md)
+
+[Eclipse с PyDev](./debuggers/eclipse-pydev.md)
+
+[pytest](./debuggers/pytest.md)
+
 [unittest](./debuggers/unittest.md)
 
 ## Сравнение отладчиков
@@ -44,11 +54,16 @@
 
 Что такое профилирование и кто такие профилировщики?
 
-[cProfile](./profilers/cProfile.md) \
-[timeit](./profilers/timeit.md) \
-[line_profiler](./profilers/line_profiler.md) \
-[memory_profiler](./profilers/memory_profiler.md) \
-[py-spy](./profilers/py-spy.md) \
+[cProfile](./profilers/cProfile.md)
+
+[timeit](./profilers/timeit.md)
+
+[line_profiler](./profilers/line_profiler.md)
+
+[memory_profiler](./profilers/memory_profiler.md)
+
+[py-spy](./profilers/py-spy.md)
+
 [pyheat](./profilers/pyheat.md)
 
 #### Сравнение профилировщиков
@@ -66,9 +81,12 @@
 
 Кто такие линтеры?
 
-[pylint](./linters/pylint.md) \
-[flake8](./linters/flake8.md) \
-[ruff](./linters/ruff.md) \
+[pylint](./linters/pylint.md)
+
+[flake8](./linters/flake8.md)
+
+[ruff](./linters/ruff.md)
+
 [mypy](./linters/mypy.md)
 
 #### Сравнение линтеров
@@ -85,11 +103,16 @@
 
 Кто такие и почему?
 
-[PyPy](./other/pypy.md) \
-[Cython](./other/cython.md) \
-[Jython](./other/jython.md) \
-[Интеграция с C](./other/c.md) \
-[Интеграция с Rust](./other/rust.md) \
+[PyPy](./other/pypy.md)
+
+[Cython](./other/cython.md)
+
+[Jython](./other/jython.md)
+
+[Интеграция с C](./other/c.md)
+
+[Интеграция с Rust](./other/rust.md)
+
 [Интеграция с Fortran](./other/fortran.md)
 
 #### Сравнение инструментов
