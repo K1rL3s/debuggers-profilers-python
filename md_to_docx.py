@@ -1,14 +1,3 @@
-"""
-Сделай данный код на Python для перевода markdown в docx более читаемым, чистым и понятным.
-Вынеси магические числа и строки в константы.
-Поработай над неймингом функций, переменных.
-Упрости код, если это возможно.
-
-1. Вложенные списки всё также неправильно обрабатываются и получается список без вложенности.
-2. Также сделай по умолчанию форматирование всего документа таким: шрифт Times New Romans, 14 пт (для сносок используется 10 пт.). Межстрочный интервал — полуторный. Размер полей: правое 10 мм, верхнее и нижнее — 20 мм, левое — 30 мм. Абзацный отступ — 1,5. Номер страницы ставится внизу по центру. Нумерация — сквозная.
-3. В документе сохраняются символы backslash (\\) для переноса строки в markdown. Убери их из документа.
-"""
-
 import os
 import re
 import markdown
@@ -110,17 +99,25 @@ def add_image_to_doc(doc, img_path, width=Inches(6)):
         doc.add_paragraph(f"[Image not found: {img_path}]")
 
 
-def add_code_block_to_doc(doc, code_content, language=None):
-    """Add a code block to the DOCX document with monospaced font."""
-    paragraph = doc.add_paragraph()
-    run = paragraph.add_run(code_content)
-    run.font.name = 'Courier New'
-    run.font.size = Pt(12)
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    paragraph_format = paragraph.paragraph_format
-    paragraph_format.space_before = Pt(5)
-    paragraph_format.space_after = Pt(5)
-    paragraph_format.line_spacing = 1.5  # Полуторный интервал
+def add_code_block_to_doc(doc, code_content):
+    """Add a code block to the DOCX document in a bordered table."""
+    # Create a table with one cell for the code block
+    table = doc.add_table(rows=1, cols=1)
+    table.style = 'Table Grid'  # Add borders
+    cell = table.rows[0].cells[0]
+
+    # Remove default paragraph and add code as plain text
+    cell.text = code_content.rstrip()
+    for paragraph in cell.paragraphs:
+        for run in paragraph.runs:
+            run.font.name = 'Courier New'
+            run.font.size = Pt(12)
+
+    # Remove extra spacing
+    cell.paragraphs[0].paragraph_format.space_before = Pt(5)
+    cell.paragraphs[0].paragraph_format.space_after = Pt(5)
+    cell.paragraphs[0].paragraph_format.line_spacing = 1.0
+    cell.paragraphs[0].paragraph_format.first_line_indent = Cm(0)
 
 
 def add_table_to_doc(doc, table_html):
