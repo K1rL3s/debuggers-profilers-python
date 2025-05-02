@@ -16,7 +16,7 @@
 pip install ruff
 ```
 
-## Основное использование
+## Использование
 Запустите линтинг:
 ```
 ruff check path/to/code/
@@ -30,7 +30,7 @@ ruff check --fix path/to/code/
 ruff format path/to/code/
 ```
 
-## Пример
+## Примеры
 ```bash
 ruff check myscript.py
 ```

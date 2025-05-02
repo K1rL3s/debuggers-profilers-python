@@ -15,7 +15,7 @@
 pip install py-spy
 ```
 
-## Основное использование
+## Использование
 Для профилирования процесса:
 ```
 py-spy top --pid <pid>
@@ -25,7 +25,7 @@ py-spy top --pid <pid>
 py-spy record --flame profile.svg --pid <pid>
 ```
 
-## Пример
+## Примеры
 Для процесса с PID 12345:
 ```
 py-spy top --pid 12345

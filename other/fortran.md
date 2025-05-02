@@ -16,13 +16,13 @@ pip install numpy
 ```
 Требуется Fortran-компилятор (например, gfortran).
 
-## Основное использование
+## Использование
 Напишите Fortran-код, скомпилируйте с f2py:
 ```
 f2py -c -m mymodule myscript.f90
 ```
 
-## Пример
+## Примеры
 ```fortran
 subroutine add(a, b, c)
     integer, intent(in) :: a, b

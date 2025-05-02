@@ -20,14 +20,14 @@ pip install pylint[spelling]
 ```
 Это требует наличия библиотеки `enchant` C ([Установка enchant](https://pyenchant.github.io/pyenchant/install.html#installing-the-enchant-c-library)). Pylint интегрируется с большинством редакторов и IDE.
 
-## Основное использование
+## Использование
 Запустите `pylint` на файле или директории:
 ```
 pylint myscript.py
 ```
 Для начального анализа используйте флаг `--errors-only`. Отключите определенные категории сообщений с помощью `--disable=C,R` (конвенции и рефакторинг).
 
-## Пример
+## Примеры
 ```bash
 pylint --errors-only myscript.py
 ```

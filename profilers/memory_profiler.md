@@ -15,7 +15,7 @@
 pip install memory_profiler
 ```
 
-## Основное использование
+## Использование
 Добавьте декоратор `@profile`:
 ```python
 @profile
@@ -27,7 +27,7 @@ def my_function():
 python -m memory_profiler script.py
 ```
 
-## Пример
+## Примеры
 ```python
 from memory_profiler import profile
 

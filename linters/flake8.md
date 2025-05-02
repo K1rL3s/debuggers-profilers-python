@@ -16,7 +16,7 @@ python -m pip install flake8
 ```
 Убедитесь, что версия Python соответствует устанавливаемой версии `flake8` для поддержки языковых функций.
 
-## Основное использование
+## Использование
 Запустите `flake8` на файле или директории:
 ```
 flake8 path/to/code/to/check.py
@@ -30,7 +30,7 @@ flake8 --select E123,W503 path/to/code/
 flake8 --extend-ignore E203,W234 path/to/code/
 ```
 
-## Пример
+## Примеры
 ```bash
 flake8 myscript.py
 ```
