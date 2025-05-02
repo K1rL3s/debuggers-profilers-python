@@ -14,23 +14,11 @@
 `logging` входит в стандартную библиотеку Python, поэтому установка не требуется.
 
 
-## Основное использование
+## Использование
 Создать логгер (`logging.getLogger(__name__)`), настроить его (`logging.basicConfig()`), использовать методы `debug()`, `info()`, `warning()`, `error()`, `critical()` для логгирования.
 
-## Пример
-```python
-import logging
-
-logging.basicConfig(filename='myapp.log', level=logging.INFO)
-logging.info('Started')
-# ... код программы ...
-logging.info('Finished')
-```
-Вывод в `myapp.log`:
-```
-INFO:__main__:Started
-INFO:__main__:Finished
-```
+## Примеры
+[logger.py](../examples/logger.py)
 
 ## Плюсы
 - Стандартизированное логирование по всему приложению.
@@ -46,3 +34,4 @@ INFO:__main__:Finished
 
 ## Ссылки
 - [Официальная документация logging](https://docs.python.org/3/library/logging.html)
+- [Документация на docs-python.ru](https://docs-python.ru/standart-library/paket-logging-python)

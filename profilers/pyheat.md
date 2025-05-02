@@ -17,7 +17,7 @@ cd pyheat
 python setup.py install
 ```
 
-## Основное использование
+## Использование
 Для профилирования и просмотра тепловой карты:
 ```
 pyheat <path_to_python_file>
@@ -27,7 +27,7 @@ pyheat <path_to_python_file>
 pyheat <path_to_python_file> --out image_file.png
 ```
 
-## Пример
+## Примеры
 Для файла `example.py`:
 ```
 pyheat example.py

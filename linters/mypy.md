@@ -14,14 +14,14 @@
 pip install mypy
 ```
 
-## Основное использование
+## Использование
 Добавьте аннотации типов в код и запустите:
 ```
 mypy myscript.py
 ```
 Mypy выведет ошибки типизации, не влияя на выполнение программы.
 
-## Пример
+## Примеры
 ```python
 number: int = input("What is your favourite number?")
 print("It is", number + 1)  # error: Unsupported operand types for + ("str" and "int")

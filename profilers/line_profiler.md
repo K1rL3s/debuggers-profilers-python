@@ -15,7 +15,7 @@
 pip install line_profiler
 ```
 
-## Основное использование
+## Использование
 Добавьте декоратор `@profile` к функции:
 ```python
 @profile
@@ -31,7 +31,7 @@ kernprof -l script.py
 python -m line_profiler script.py.lprof
 ```
 
-## Пример
+## Примеры
 ```python
 from line_profiler import profile
 

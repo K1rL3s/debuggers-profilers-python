@@ -18,29 +18,11 @@
 ## Установка
 `unittest` входит в стандартную библиотеку Python, поэтому установка не требуется.
 
-## Основное использование
-Создайте классы тестов, наследующие от `unittest.TestCase`, и определите методы, начинающиеся с `test_`. Используйте методы утверждения, такие как `assertEqual`, `assertTrue`, `assertRaises`. Запустите тесты с помощью `unittest.main()` или через командную строку с `python -m unittest`.
+## Использование
+Создаются классы тестов, наследующие от `unittest.TestCase`. Определяются методы, начинающиеся с `test_`. Дальше используются методы-утверждения `assertEqual`, `assertTrue`, `assertRaises` для проверки поведения тестируемого объекта. Тесты запускаются с помощью `unittest.main()` или через командную строку с `python -m unittest`.
 
-## Пример
-```python
-import unittest
-
-class TestStringMethods(unittest.TestCase):
-    def test_upper(self):
-        self.assertEqual('foo'.upper(), 'FOO')
-
-    def test_isupper(self):
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('Foo'.isupper())
-
-    def test_split(self):
-        self.assertEqual('hello world'.split(), ['hello', 'world'])
-        with self.assertRaises(TypeError):
-            'hello world'.split(2)
-
-if __name__ == '__main__':
-    unittest.main()
-```
+## Примеры
+[unit_tests.py](../examples/unit_tests.py)
 
 ## Плюсы
 - Поддерживает автоматизацию тестов.
@@ -64,3 +46,4 @@ if __name__ == '__main__':
 
 ## Ссылки
 - [Официальная документация unittest](https://docs.python.org/3/library/unittest.html)
+- [Документация на pythonworld.ru](https://pythonworld.ru/moduli/modul-unittest.html)
