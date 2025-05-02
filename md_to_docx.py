@@ -1,3 +1,14 @@
+"""
+Сделай данный код на Python для перевода markdown в docx более читаемым, чистым и понятным.
+Вынеси магические числа и строки в константы.
+Поработай над неймингом функций, переменных.
+Упрости код, если это возможно.
+
+1. Вложенные списки всё также неправильно обрабатываются и получается список без вложенности.
+2. Также сделай по умолчанию форматирование всего документа таким: шрифт Times New Romans, 14 пт (для сносок используется 10 пт.). Межстрочный интервал — полуторный. Размер полей: правое 10 мм, верхнее и нижнее — 20 мм, левое — 30 мм. Абзацный отступ — 1,5. Номер страницы ставится внизу по центру. Нумерация — сквозная.
+3. В документе сохраняются символы backslash (\\) для переноса строки в markdown. Убери их из документа.
+"""
+
 import os
 import re
 import markdown
@@ -27,15 +38,15 @@ def set_document_style(doc):
         section.left_margin = Cm(3.0)
         section.right_margin = Cm(1.0)
 
-    sect = doc.sections[0]
-    footer = sect.footer
+    section = doc.sections[0]
+    footer = section.footer
     footer.paragraphs[0].text = "\t"
     run = footer.paragraphs[0].add_run()
     fld = OxmlElement('w:fldSimple')
     fld.set(qn('w:instr'), 'PAGE')
     run._r.append(fld)
-    sect.footer_distance = Cm(1.0)
-    sect.different_first_page_header_footer = True
+    section.footer_distance = Cm(1.0)
+    section.different_first_page_header_footer = True
     doc.sections[0].first_page_footer.paragraphs[0].text = ""
 
 
@@ -109,6 +120,7 @@ def add_code_block_to_doc(doc, code_content, language=None):
     paragraph_format = paragraph.paragraph_format
     paragraph_format.space_before = Pt(5)
     paragraph_format.space_after = Pt(5)
+    paragraph_format.line_spacing = 1.5  # Полуторный интервал
 
 
 def add_table_to_doc(doc, table_html):
