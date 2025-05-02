@@ -32,6 +32,7 @@ CONTENT_DIR = "./content"
 OUTPUT_FILE = "output.docx"
 MD_EXT = ".md"
 PY_EXT = ".py"
+CODE_BLOCK_SPACING = Pt(10)  # Spacing between code blocks
 
 
 def configure_document_style(document: Document) -> None:
@@ -126,7 +127,6 @@ def insert_image(
 
 
 def insert_code_block(document: Document, code_content: str) -> None:
-    """Insert a code block into the document within a table."""
     table = document.add_table(rows=1, cols=1)
     table.style = TABLE_STYLE
     cell = table.rows[0].cells[0]
@@ -135,8 +135,8 @@ def insert_code_block(document: Document, code_content: str) -> None:
         for run in paragraph.runs:
             run.font.name = CODE_FONT_NAME
             run.font.size = CODE_FONT_SIZE
-    cell.paragraphs[0].paragraph_format.space_before = Pt(5)
-    cell.paragraphs[0].paragraph_format.space_after = Pt(5)
+    cell.paragraphs[0].paragraph_format.space_before = Pt(0)
+    cell.paragraphs[0].paragraph_format.space_after = CODE_BLOCK_SPACING
     cell.paragraphs[0].paragraph_format.line_spacing = 1.0
     cell.paragraphs[0].paragraph_format.first_line_indent = Cm(0)
 
