@@ -11,9 +11,9 @@ from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
 
 # Constants
-FONT_NAME = 'Times New Roman'
+FONT_NAME = "Times New Roman"
 FONT_SIZE = Pt(14)
-CODE_FONT_NAME = 'Courier New'
+CODE_FONT_NAME = "Courier New"
 CODE_FONT_SIZE = Pt(12)
 LINE_SPACING = 1.5
 FIRST_LINE_INDENT = Cm(1.5)
@@ -25,16 +25,17 @@ FOOTER_DISTANCE = Cm(1.0)
 LIST_INDENT = Cm(0.63)
 IMAGE_WIDTH = Inches(6)
 HYPERLINK_COLOR = RGBColor(0, 0, 255)
-TABLE_STYLE = 'Table Grid'
-MARKDOWN_EXTENSIONS = ['extra', 'fenced_code', 'tables']
-README_FILE = 'README.md'
-CONTENT_DIR = './content'
-OUTPUT_FILE = 'output.docx'
-MD_EXT = '.md'
+TABLE_STYLE = "Table Grid"
+MARKDOWN_EXTENSIONS = ["extra", "fenced_code", "tables"]
+README_FILE = "README.md"
+CONTENT_DIR = "./content"
+OUTPUT_FILE = "output.docx"
+MD_EXT = ".md"
+
 
 def configure_document_style(document: Document) -> None:
     """Configure the document style with predefined settings."""
-    style = document.styles['Normal']
+    style = document.styles["Normal"]
     font = style.font
     font.name = FONT_NAME
     font.size = FONT_SIZE
@@ -53,20 +54,21 @@ def configure_document_style(document: Document) -> None:
     footer = section.footer
     footer.paragraphs[0].text = "\t"
     run = footer.paragraphs[0].add_run()
-    fld = OxmlElement('w:fldSimple')
-    fld.set(qn('w:instr'), 'PAGE')
+    fld = OxmlElement("w:fldSimple")
+    fld.set(qn("w:instr"), "PAGE")
     run._r.append(fld)
     section.footer_distance = FOOTER_DISTANCE
     section.different_first_page_header_footer = True
     document.sections[0].first_page_footer.paragraphs[0].text = ""
+
 
 def add_hyperlink(paragraph, url: str, text: str) -> None:
     """Add a clickable hyperlink to a paragraph."""
     part = paragraph.part
     r_id = part.relate_to(
         url,
-        'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
-        is_external=True
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        is_external=True,
     )
 
     run = paragraph.add_run(text)
@@ -75,36 +77,43 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
 
     run_xml = run._r
     paragraph._p.remove(run_xml)
-    hyperlink = OxmlElement('w:hyperlink')
-    hyperlink.set(qn('r:id'), r_id)
+    hyperlink = OxmlElement("w:hyperlink")
+    hyperlink.set(qn("r:id"), r_id)
     hyperlink.append(run_xml)
     paragraph._p.append(hyperlink)
 
-def extract_h1_from_markdown(file_path: str, fallback_text: Optional[str] = None) -> str:
+
+def extract_h1_from_markdown(
+    file_path: str, fallback_text: Optional[str] = None
+) -> str:
     """Extract the first H1 heading from a Markdown file or return a fallback."""
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             markdown_content = f.read()
         if not markdown_content.strip():
             return fallback_text or os.path.basename(file_path)
         md = markdown.Markdown(extensions=MARKDOWN_EXTENSIONS)
         html_content = md.convert(markdown_content)
-        soup = BeautifulSoup(html_content, 'html.parser')
-        h1 = soup.find('h1')
+        soup = BeautifulSoup(html_content, "html.parser")
+        h1 = soup.find("h1")
         return h1.get_text() if h1 else (fallback_text or os.path.basename(file_path))
     except Exception:
         return fallback_text or os.path.basename(file_path)
 
+
 def adjust_headers(html_content: str, level_increase: int) -> str:
     """Increase header levels in HTML content."""
-    soup = BeautifulSoup(html_content, 'html.parser')
-    for header in soup.find_all(re.compile('^h[1-6]$')):
+    soup = BeautifulSoup(html_content, "html.parser")
+    for header in soup.find_all(re.compile("^h[1-6]$")):
         current_level = int(header.name[1])
         new_level = min(current_level + level_increase, 6)
-        header.name = f'h{new_level}'
+        header.name = f"h{new_level}"
     return str(soup)
 
-def insert_image(document: Document, image_path: str, width: Inches = IMAGE_WIDTH) -> None:
+
+def insert_image(
+    document: Document, image_path: str, width: Inches = IMAGE_WIDTH
+) -> None:
     """Insert an image into the document with specified width."""
     if os.path.exists(image_path):
         paragraph = document.add_paragraph()
@@ -113,6 +122,7 @@ def insert_image(document: Document, image_path: str, width: Inches = IMAGE_WIDT
         paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     else:
         document.add_paragraph(f"[Image not found: {image_path}]")
+
 
 def insert_code_block(document: Document, code_content: str) -> None:
     """Insert a code block into the document within a table."""
@@ -129,47 +139,55 @@ def insert_code_block(document: Document, code_content: str) -> None:
     cell.paragraphs[0].paragraph_format.line_spacing = 1.0
     cell.paragraphs[0].paragraph_format.first_line_indent = Cm(0)
 
+
 def insert_table(document: Document, table_html: str) -> None:
     """Convert an HTML table to a DOCX table."""
-    soup = BeautifulSoup(table_html, 'html.parser')
-    table = soup.find('table')
+    soup = BeautifulSoup(table_html, "html.parser")
+    table = soup.find("table")
     if not table:
         return
 
-    rows = table.find_all('tr')
+    rows = table.find_all("tr")
     if not rows:
         return
 
     num_rows = len(rows)
-    num_cols = max(len(row.find_all(['td', 'th'])) for row in rows)
+    num_cols = max(len(row.find_all(["td", "th"])) for row in rows)
     doc_table = document.add_table(rows=num_rows, cols=num_cols)
     doc_table.style = TABLE_STYLE
 
     for i, row in enumerate(rows):
-        cells = row.find_all(['td', 'th'])
+        cells = row.find_all(["td", "th"])
         for j, cell in enumerate(cells):
             cell_text = cell.get_text(strip=True)
             doc_table.rows[i].cells[j].text = cell_text
-            if cell.name == 'th':
+            if cell.name == "th":
                 for paragraph in doc_table.rows[i].cells[j].paragraphs:
                     for run in paragraph.runs:
                         run.font.bold = True
 
+
 def process_list_element(
-    list_element, document: Document, content_directory: str, level_increase: int,
-    processed_files: Set[str], list_type: str, nesting_level: int,
-    markdown_file_path: str, root_directory: str
+    list_element,
+    document: Document,
+    content_directory: str,
+    level_increase: int,
+    processed_files: Set[str],
+    list_type: str,
+    nesting_level: int,
+    markdown_file_path: str,
+    root_directory: str,
 ) -> None:
     """Process nested lists and add them to the document."""
-    for li in list_element.find_all('li', recursive=False):
+    for li in list_element.find_all("li", recursive=False):
         paragraph = document.add_paragraph(
-            style='ListBullet' if list_type == 'bullet' else 'ListNumber'
+            style="ListBullet" if list_type == "bullet" else "ListNumber"
         )
         paragraph.paragraph_format.left_indent = LIST_INDENT * nesting_level
 
         for child in li.children:
-            if child.name == 'a':
-                href = child.get('href', '')
+            if child.name == "a":
+                href = child.get("href", "")
                 if href and href.endswith(MD_EXT):
                     md_path = os.path.join(os.path.dirname(markdown_file_path), href)
                     if os.path.exists(md_path):
@@ -177,9 +195,13 @@ def process_list_element(
                         heading_text = extract_h1_from_markdown(md_path, link_text)
                         document.add_heading(heading_text, level=level_increase + 1)
                         process_markdown(
-                            md_path, root_directory, document, content_directory,
-                            level_increase=level_increase + 1, skip_h1=True,
-                            processed_files=processed_files
+                            md_path,
+                            root_directory,
+                            document,
+                            content_directory,
+                            level_increase=level_increase + 1,
+                            skip_h1=True,
+                            processed_files=processed_files,
                         )
                     else:
                         paragraph.add_run(f"[Markdown file not found: {href}]")
@@ -187,39 +209,60 @@ def process_list_element(
                     add_hyperlink(paragraph, href, child.get_text())
                 else:
                     paragraph.add_run(child.get_text())
-            elif child.name == 'strong':
+            elif child.name == "strong":
                 run = paragraph.add_run(child.get_text())
                 run.bold = True
-            elif child.name == 'em':
+            elif child.name == "em":
                 run = paragraph.add_run(child.get_text())
                 run.italic = True
-            elif child.name == 'code':
+            elif child.name == "code":
                 run = paragraph.add_run(child.get_text())
                 run.font.name = CODE_FONT_NAME
                 run.font.size = CODE_FONT_SIZE
-            elif child.name == 'img':
-                img_src = child.get('src', '')
-                img_path = os.path.join(content_directory, img_src) if not os.path.isabs(img_src) else img_src
-                insert_image(document, img_path)
-            elif child.name == 'ul':
-                process_list_element(
-                    child, document, content_directory, level_increase, processed_files,
-                    list_type='bullet', nesting_level=nesting_level + 1,
-                    markdown_file_path=markdown_file_path, root_directory=root_directory
+            elif child.name == "img":
+                img_src = child.get("src", "")
+                img_path = (
+                    os.path.join(content_directory, img_src)
+                    if not os.path.isabs(img_src)
+                    else img_src
                 )
-            elif child.name == 'ol':
+                insert_image(document, img_path)
+            elif child.name == "ul":
                 process_list_element(
-                    child, document, content_directory, level_increase, processed_files,
-                    list_type='number', nesting_level=nesting_level + 1,
-                    markdown_file_path=markdown_file_path, root_directory=root_directory
+                    child,
+                    document,
+                    content_directory,
+                    level_increase,
+                    processed_files,
+                    list_type="bullet",
+                    nesting_level=nesting_level + 1,
+                    markdown_file_path=markdown_file_path,
+                    root_directory=root_directory,
+                )
+            elif child.name == "ol":
+                process_list_element(
+                    child,
+                    document,
+                    content_directory,
+                    level_increase,
+                    processed_files,
+                    list_type="number",
+                    nesting_level=nesting_level + 1,
+                    markdown_file_path=markdown_file_path,
+                    root_directory=root_directory,
                 )
             else:
                 paragraph.add_run(str(child))
 
+
 def process_markdown(
-    markdown_file_path: str, root_directory: str, document: Document,
-    content_directory: str, level_increase: int = 0, skip_h1: bool = False,
-    processed_files: Optional[Set[str]] = None
+    markdown_file_path: str,
+    root_directory: str,
+    document: Document,
+    content_directory: str,
+    level_increase: int = 0,
+    skip_h1: bool = False,
+    processed_files: Optional[Set[str]] = None,
 ) -> None:
     """Process a Markdown file and add its content to the document."""
     if processed_files is None:
@@ -229,40 +272,46 @@ def process_markdown(
         return
     processed_files.add(markdown_file_path)
 
-    with open(markdown_file_path, 'r', encoding='utf-8') as f:
+    with open(markdown_file_path, "r", encoding="utf-8") as f:
         markdown_content = f.read()
 
     md = markdown.Markdown(extensions=MARKDOWN_EXTENSIONS)
     html_content = md.convert(markdown_content)
 
-    soup = BeautifulSoup(html_content, 'html.parser')
+    soup = BeautifulSoup(html_content, "html.parser")
 
     if skip_h1:
-        for h1 in soup.find_all('h1'):
+        for h1 in soup.find_all("h1"):
             h1.decompose()
 
     html_content = adjust_headers(str(soup), level_increase)
-    soup = BeautifulSoup(html_content, 'html.parser')
+    soup = BeautifulSoup(html_content, "html.parser")
 
     for element in soup.children:
-        if element.name in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+        if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
             level = int(element.name[1])
             document.add_heading(element.get_text(), level=level)
-        elif element.name == 'p':
+        elif element.name == "p":
             paragraph = document.add_paragraph()
             for child in element.children:
-                if child.name == 'a':
-                    href = child.get('href', '')
+                if child.name == "a":
+                    href = child.get("href", "")
                     if href and href.endswith(MD_EXT):
-                        md_path = os.path.join(os.path.dirname(markdown_file_path), href)
+                        md_path = os.path.join(
+                            os.path.dirname(markdown_file_path), href
+                        )
                         if os.path.exists(md_path):
                             link_text = child.get_text()
                             heading_text = extract_h1_from_markdown(md_path, link_text)
                             document.add_heading(heading_text, level=level_increase + 1)
                             process_markdown(
-                                md_path, root_directory, document, content_directory,
-                                level_increase=level_increase + 1, skip_h1=True,
-                                processed_files=processed_files
+                                md_path,
+                                root_directory,
+                                document,
+                                content_directory,
+                                level_increase=level_increase + 1,
+                                skip_h1=True,
+                                processed_files=processed_files,
                             )
                         else:
                             paragraph.add_run(f"[Markdown file not found: {href}]")
@@ -270,42 +319,61 @@ def process_markdown(
                         add_hyperlink(paragraph, href, child.get_text())
                     else:
                         paragraph.add_run(child.get_text())
-                elif child.name == 'strong':
+                elif child.name == "strong":
                     run = paragraph.add_run(child.get_text())
                     run.bold = True
-                elif child.name == 'em':
+                elif child.name == "em":
                     run = paragraph.add_run(child.get_text())
                     run.italic = True
-                elif child.name == 'code':
+                elif child.name == "code":
                     run = paragraph.add_run(child.get_text())
                     run.font.name = CODE_FONT_NAME
                     run.font.size = CODE_FONT_SIZE
-                elif child.name == 'img':
-                    img_src = child.get('src', '')
-                    img_path = os.path.join(content_directory, img_src) if not os.path.isabs(img_src) else img_src
+                elif child.name == "img":
+                    img_src = child.get("src", "")
+                    img_path = (
+                        os.path.join(content_directory, img_src)
+                        if not os.path.isabs(img_src)
+                        else img_src
+                    )
                     insert_image(document, img_path)
                 else:
                     paragraph.add_run(str(child))
-        elif element.name == 'ul':
+        elif element.name == "ul":
             process_list_element(
-                element, document, content_directory, level_increase, processed_files,
-                list_type='bullet', nesting_level=0, markdown_file_path=markdown_file_path,
-                root_directory=root_directory
+                element,
+                document,
+                content_directory,
+                level_increase,
+                processed_files,
+                list_type="bullet",
+                nesting_level=0,
+                markdown_file_path=markdown_file_path,
+                root_directory=root_directory,
             )
-        elif element.name == 'ol':
+        elif element.name == "ol":
             process_list_element(
-                element, document, content_directory, level_increase, processed_files,
-                list_type='number', nesting_level=0, markdown_file_path=markdown_file_path,
-                root_directory=root_directory
+                element,
+                document,
+                content_directory,
+                level_increase,
+                processed_files,
+                list_type="number",
+                nesting_level=0,
+                markdown_file_path=markdown_file_path,
+                root_directory=root_directory,
             )
-        elif element.name == 'table':
+        elif element.name == "table":
             insert_table(document, str(element))
-        elif element.name == 'pre':
-            code = element.find('code')
+        elif element.name == "pre":
+            code = element.find("code")
             if code:
                 insert_code_block(document, code.get_text())
 
-def convert_markdown_to_docx(root_directory: str, output_docx: str, content_directory: str) -> None:
+
+def convert_markdown_to_docx(
+    root_directory: str, output_docx: str, content_directory: str
+) -> None:
     """Convert Markdown files to a single DOCX file."""
     document = Document()
     configure_document_style(document)
@@ -316,36 +384,44 @@ def convert_markdown_to_docx(root_directory: str, output_docx: str, content_dire
         print(f"{README_FILE} not found!")
         return
 
-    with open(readme_path, 'r', encoding='utf-8') as f:
+    with open(readme_path, "r", encoding="utf-8") as f:
         readme_content = f.read()
 
     md = markdown.Markdown(extensions=MARKDOWN_EXTENSIONS)
     html_content = md.convert(readme_content)
-    soup = BeautifulSoup(html_content, 'html.parser')
+    soup = BeautifulSoup(html_content, "html.parser")
 
     processed_files = set()
     current_heading_level = 1
 
     for element in soup.children:
-        if element.name in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+        if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
             current_heading_level = int(element.name[1])
             document.add_heading(element.get_text(), level=current_heading_level)
-        elif element.name == 'p':
+        elif element.name == "p":
             paragraph = document.add_paragraph()
             for child in element.children:
-                if child.name == 'a':
-                    href = child.get('href', '')
+                if child.name == "a":
+                    href = child.get("href", "")
                     if href and href.endswith(MD_EXT):
                         md_path = href
                         full_md_path = os.path.join(root_directory, md_path)
                         if os.path.exists(full_md_path):
                             link_text = child.get_text()
-                            heading_text = extract_h1_from_markdown(full_md_path, link_text)
-                            document.add_heading(heading_text, level=current_heading_level + 1)
+                            heading_text = extract_h1_from_markdown(
+                                full_md_path, link_text
+                            )
+                            document.add_heading(
+                                heading_text, level=current_heading_level + 1
+                            )
                             process_markdown(
-                                full_md_path, root_directory, document, content_directory,
-                                level_increase=current_heading_level + 1, skip_h1=True,
-                                processed_files=processed_files
+                                full_md_path,
+                                root_directory,
+                                document,
+                                content_directory,
+                                level_increase=current_heading_level + 1,
+                                skip_h1=True,
+                                processed_files=processed_files,
                             )
                         else:
                             paragraph.add_run(f"[Markdown file not found: {md_path}]")
@@ -353,43 +429,60 @@ def convert_markdown_to_docx(root_directory: str, output_docx: str, content_dire
                         add_hyperlink(paragraph, href, child.get_text())
                     else:
                         paragraph.add_run(child.get_text())
-                elif child.name == 'strong':
+                elif child.name == "strong":
                     run = paragraph.add_run(child.get_text())
                     run.bold = True
-                elif child.name == 'em':
+                elif child.name == "em":
                     run = paragraph.add_run(child.get_text())
                     run.italic = True
-                elif child.name == 'code':
+                elif child.name == "code":
                     run = paragraph.add_run(child.get_text())
                     run.font.name = CODE_FONT_NAME
                     run.font.size = CODE_FONT_SIZE
-                elif child.name == 'img':
-                    img_src = child.get('src', '')
-                    img_path = os.path.join(content_directory, img_src) if not os.path.isabs(img_src) else img_src
+                elif child.name == "img":
+                    img_src = child.get("src", "")
+                    img_path = (
+                        os.path.join(content_directory, img_src)
+                        if not os.path.isabs(img_src)
+                        else img_src
+                    )
                     insert_image(document, img_path)
                 else:
                     paragraph.add_run(str(child))
-        elif element.name == 'ul':
+        elif element.name == "ul":
             process_list_element(
-                element, document, content_directory, current_heading_level, processed_files,
-                list_type='bullet', nesting_level=0, markdown_file_path=readme_path,
-                root_directory=root_directory
+                element,
+                document,
+                content_directory,
+                current_heading_level,
+                processed_files,
+                list_type="bullet",
+                nesting_level=0,
+                markdown_file_path=readme_path,
+                root_directory=root_directory,
             )
-        elif element.name == 'ol':
+        elif element.name == "ol":
             process_list_element(
-                element, document, content_directory, current_heading_level, processed_files,
-                list_type='number', nesting_level=0, markdown_file_path=readme_path,
-                root_directory=root_directory
+                element,
+                document,
+                content_directory,
+                current_heading_level,
+                processed_files,
+                list_type="number",
+                nesting_level=0,
+                markdown_file_path=readme_path,
+                root_directory=root_directory,
             )
-        elif element.name == 'table':
+        elif element.name == "table":
             insert_table(document, str(element))
-        elif element.name == 'pre':
-            code = element.find('code')
+        elif element.name == "pre":
+            code = element.find("code")
             if code:
                 insert_code_block(document, code.get_text())
 
     document.save(output_docx)
     print(f"Document saved as {output_docx}")
+
 
 if __name__ == "__main__":
     root_directory = "."
