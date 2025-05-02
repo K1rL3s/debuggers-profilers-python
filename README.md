@@ -107,8 +107,6 @@
 
 [Cython](./other/cython.md)
 
-[Jython](./other/jython.md)
-
 [Интеграция с C](./other/c.md)
 
 [Интеграция с Rust](./other/rust.md)
