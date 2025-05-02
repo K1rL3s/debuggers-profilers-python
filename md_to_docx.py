@@ -104,7 +104,7 @@ def add_code_block_to_doc(doc, code_content, language=None):
     paragraph = doc.add_paragraph()
     run = paragraph.add_run(code_content)
     run.font.name = 'Courier New'
-    run.font.size = Pt(10)
+    run.font.size = Pt(12)
     paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
     paragraph_format = paragraph.paragraph_format
     paragraph_format.space_before = Pt(5)
@@ -176,11 +176,9 @@ def process_list(
                 run = paragraph.add_run(child.get_text())
                 run.italic = True
             elif child.name == 'code':
-                # paragraph.add_run(" ")  # Add space before code
                 run = paragraph.add_run(child.get_text())
                 run.font.name = 'Courier New'
                 run.font.size = Pt(12)
-                # paragraph.add_run(" ")  # Add space after code
             elif child.name == 'img':
                 img_src = child.get('src', '')
                 img_path = os.path.join(content_dir, img_src) if not os.path.isabs(
@@ -200,7 +198,7 @@ def process_list(
                     file_path=file_path, base_path=base_path
                 )
             else:
-                paragraph.add_run(str(child).strip())
+                paragraph.add_run(str(child))
 
 
 def process_markdown_file(
@@ -272,11 +270,9 @@ def process_markdown_file(
                     run = paragraph.add_run(child.get_text())
                     run.italic = True
                 elif child.name == 'code':
-                    paragraph.add_run(" ")  # Add space before code
                     run = paragraph.add_run(child.get_text())
                     run.font.name = 'Courier New'
-                    run.font.size = Pt(10)
-                    paragraph.add_run(" ")  # Add space after code
+                    run.font.size = Pt(12)
                 elif child.name == 'img':
                     img_src = child.get('src', '')
                     img_path = os.path.join(content_dir, img_src) if not os.path.isabs(
@@ -306,7 +302,7 @@ def process_markdown_file(
 
 
 def collect_and_convert_to_docx(root_dir, output_docx, content_dir):
-    """Collect Markdown files and convert them to a single DOCX file with specified formatting."""
+    """Collect Markdown files and convert them to a single DOCX file."""
     doc = Document()
     set_document_style(doc)
 
@@ -362,11 +358,9 @@ def collect_and_convert_to_docx(root_dir, output_docx, content_dir):
                     run = paragraph.add_run(child.get_text())
                     run.italic = True
                 elif child.name == 'code':
-                    paragraph.add_run(" ")  # Add space before code
                     run = paragraph.add_run(child.get_text())
                     run.font.name = 'Courier New'
-                    run.font.size = Pt(10)
-                    paragraph.add_run(" ")  # Add space after code
+                    run.font.size = Pt(12)
                 elif child.name == 'img':
                     img_src = child.get('src', '')
                     img_path = os.path.join(content_dir, img_src) if not os.path.isabs(
