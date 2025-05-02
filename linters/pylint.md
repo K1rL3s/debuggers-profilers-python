@@ -1,7 +1,7 @@
 # pylint
 
 ## Описание
-`pylint` — это статический анализатор кода для Python (версии 2 и 3, поддерживает Python 3.9.0 и выше). Он проверяет код на наличие ошибок, обеспечивает соблюдение стандартов кодирования (например, PEP 8), выявляет "запахи кода" (code smells) и предлагает рекомендации по рефакторингу без необходимости запуска программы.
+`pylint` - это статический анализатор кода для Python (версии 2 и 3, поддерживает Python 3.9.0 и выше). Он проверяет код на наличие ошибок, обеспечивает соблюдение стандартов кодирования (например, PEP 8), выявляет "запахи кода" (code smells) и предлагает рекомендации по рефакторингу без необходимости запуска программы.
 
 ## Основные возможности
 - **Инференс**: Использует библиотеку `astroid` для вывода фактических значений, что позволяет, например, различать вызовы `logging` и `argparse`.
@@ -57,4 +57,3 @@ pylint --errors-only myscript.py
 - [Контакт и поддержка pylint](https://pylint.readthedocs.io/en/latest/contact.html)
 - [Tidelift для pylint](https://tidelift.com/subscription/pkg/pypi-pylint?utm_source=pypi-pylint&utm_medium=referral&utm_campaign=readme)
 - [Значок pylint](https://pylint.readthedocs.io/en/latest/user_guide/installation/badge.html)
-

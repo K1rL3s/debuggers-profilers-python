@@ -1,7 +1,7 @@
 # Jython
 
 ## Описание
-Jython — это реализация Python, работающая на Java Virtual Machine (JVM). Она позволяет запускать Python-код в Java-среде, обеспечивая доступ к Java-библиотекам.
+Jython - это реализация Python, работающая на Java Virtual Machine (JVM). Она позволяет запускать Python-код в Java-среде, обеспечивая доступ к Java-библиотекам.
 
 ## Основные возможности
 - Выполнение Python-кода на JVM.
