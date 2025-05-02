@@ -31,6 +31,7 @@ README_FILE = "README.md"
 CONTENT_DIR = "./content"
 OUTPUT_FILE = "output.docx"
 MD_EXT = ".md"
+PY_EXT = ".py"
 
 
 def configure_document_style(document: Document) -> None:
@@ -188,7 +189,15 @@ def process_list_element(
         for child in li.children:
             if child.name == "a":
                 href = child.get("href", "")
-                if href and href.endswith(MD_EXT):
+                if href and href.endswith(PY_EXT):
+                    py_path = os.path.join(os.path.dirname(markdown_file_path), href)
+                    if os.path.exists(py_path):
+                        with open(py_path, "r", encoding="utf-8") as f:
+                            code_content = f.read()
+                        insert_code_block(document, code_content)
+                    else:
+                        paragraph.add_run(f"[Python file not found: {href}]")
+                elif href and href.endswith(MD_EXT):
                     md_path = os.path.join(os.path.dirname(markdown_file_path), href)
                     if os.path.exists(md_path):
                         link_text = child.get_text()
@@ -296,7 +305,17 @@ def process_markdown(
             for child in element.children:
                 if child.name == "a":
                     href = child.get("href", "")
-                    if href and href.endswith(MD_EXT):
+                    if href and href.endswith(PY_EXT):
+                        py_path = os.path.join(
+                            os.path.dirname(markdown_file_path), href
+                        )
+                        if os.path.exists(py_path):
+                            with open(py_path, "r", encoding="utf-8") as f:
+                                code_content = f.read()
+                            insert_code_block(document, code_content)
+                        else:
+                            paragraph.add_run(f"[Python file not found: {href}]")
+                    elif href and href.endswith(MD_EXT):
                         md_path = os.path.join(
                             os.path.dirname(markdown_file_path), href
                         )
@@ -403,7 +422,15 @@ def convert_markdown_to_docx(
             for child in element.children:
                 if child.name == "a":
                     href = child.get("href", "")
-                    if href and href.endswith(MD_EXT):
+                    if href and href.endswith(PY_EXT):
+                        py_path = os.path.join(root_directory, href.lstrip("./"))
+                        if os.path.exists(py_path):
+                            with open(py_path, "r", encoding="utf-8") as f:
+                                code_content = f.read()
+                            insert_code_block(document, code_content)
+                        else:
+                            paragraph.add_run(f"[Python file not found: {href}]")
+                    elif href and href.endswith(MD_EXT):
                         md_path = href
                         full_md_path = os.path.join(root_directory, md_path)
                         if os.path.exists(full_md_path):
