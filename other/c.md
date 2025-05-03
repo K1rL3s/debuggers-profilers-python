@@ -10,23 +10,19 @@
 - Оптимизация критических участков кода.
 
 ## Установка
-Требуются заголовочные файлы Python (включены в стандартную установку) и C-компилятор (например, GCC). Установите Python-dev:
-```
-sudo apt-get install python3-dev
-```
+Требуются заголовочные файлы Python (включены в стандартную установку) и C-компилятор (например, GCC).
 
 ## Использование
-Напишите C-код, определите функции, скомпилируйте в общую библиотеку (.so/.dll) и импортируйте в Python с помощью `ctypes` или Python/C API.
+Напишите C-код, определите функции, скомпилируйте в общую библиотеку (.so/.dll) и импортируйте в Python с помощью `ctypes`, `cffi` или Python/C API.
 
 ## Примеры
-```c
-// mymodule.c
-#include <Python.h>
-static PyObject* my_function(PyObject* self, PyObject* args) {
-    return PyLong_FromLong(42);
-}
-```
-Скомпилируйте и импортируйте в Python.
+[c_simple.c](../examples/c_simple.c)
+[c_ctypes.py](../examples/c_ctypes.py)
+[c_cffi.py](../examples/c_cffi.py)
+
+[c_capi.c](../examples/c_capi.c)
+[c_capi_setup.py](../examples/c_capi_setup.py)
+[c_capi_file.py](../examples/c_capi_file.py)
 
 ## Плюсы
 - Высокая производительность для численных задач.
