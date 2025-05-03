@@ -7,11 +7,11 @@ import markdown
 from bs4 import BeautifulSoup
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
 
-# Constants
 FONT_NAME = "Times New Roman"
 FONT_SIZE = Pt(14)
 CODE_FONT_NAME = "Courier New"
@@ -45,8 +45,9 @@ ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
 ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
 ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
 MAX_HEADING_LEVEL = 6  # Maximum heading level
-
 CODE_EXTENSIONS = (PY_EXT, PYX_EXT, C_EXT, H_EXT, RS_EXT, TOML_EXT)
+
+LISTING_COUNTER = 0
 
 
 def is_code_extension(filename: str) -> bool:
@@ -83,6 +84,16 @@ def configure_document_style(document: Document) -> None:
         rFonts.set(qn("w:hAnsi"), FONT_NAME)
         rFonts.set(qn("w:cs"), FONT_NAME)
         rFonts.set(qn("w:eastAsia"), FONT_NAME)
+
+    if "Code" not in document.styles:
+        code_style = document.styles.add_style("Code", WD_STYLE_TYPE.PARAGRAPH)
+    else:
+        code_style = document.styles["Code"]
+    code_style.font.name = CODE_FONT_NAME
+    code_style.font.size = CODE_FONT_SIZE
+    code_style.paragraph_format.line_spacing = 1.0
+    code_style.paragraph_format.space_before = Pt(0)
+    code_style.paragraph_format.space_after = CODE_BLOCK_SPACING
 
     for section in document.sections:
         section.top_margin = TOP_MARGIN
@@ -123,6 +134,20 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
     paragraph._p.append(hyperlink)
 
 
+def add_border(paragraph) -> None:
+    """Add a border to a paragraph."""
+    pPr = paragraph._p.get_or_add_pPr()
+    pBdr = OxmlElement("w:pBdr")
+    for border_name in ["top", "left", "bottom", "right"]:
+        border = OxmlElement(f"w:{border_name}")
+        border.set(qn("w:val"), "single")
+        border.set(qn("w:sz"), "4")  # Border width
+        border.set(qn("w:space"), "4")  # Space between text and border
+        border.set(qn("w:color"), "000000")  # Black border
+        pBdr.append(border)
+    pPr.append(pBdr)
+
+
 def format_heading(heading, level: int) -> None:
     """Apply formatting to a heading paragraph."""
     for run in heading.runs:
@@ -143,13 +168,13 @@ def handle_link(
     link_text: str,
     heading_level: Optional[int] = None,
 ) -> bool:
-    """Handle Markdown links to .py, .md files, or external URLs."""
     if is_code_extension(href):
         py_path = os.path.join(base_path, href)
         if os.path.exists(py_path):
             with open(py_path, "r", encoding="utf-8") as f:
                 code_content = f.read()
-            insert_code_block(document, code_content)
+            filename = os.path.basename(py_path)
+            insert_code_block(document, code_content, filename)
         else:
             paragraph.add_run(ERROR_PY_NOT_FOUND.format(href))
         return True
@@ -223,19 +248,20 @@ def insert_image(
         document.add_paragraph(ERROR_IMAGE_NOT_FOUND.format(image_path))
 
 
-def insert_code_block(document: Document, code_content: str) -> None:
-    table = document.add_table(rows=1, cols=1)
-    table.style = TABLE_STYLE
-    cell = table.rows[0].cells[0]
-    cell.text = code_content.rstrip()
-    for paragraph in cell.paragraphs:
-        for run in paragraph.runs:
-            run.font.name = CODE_FONT_NAME
-            run.font.size = CODE_FONT_SIZE
-    cell.paragraphs[0].paragraph_format.space_before = Pt(0)
-    cell.paragraphs[0].paragraph_format.space_after = CODE_BLOCK_SPACING
-    cell.paragraphs[0].paragraph_format.line_spacing = 1.0
-    cell.paragraphs[0].paragraph_format.first_line_indent = Cm(0)
+def insert_code_block(
+    document: Document, code_content: str, filename: str = "code"
+) -> None:
+    """Insert a code block with a border and a caption 'Листинг X - filename'."""
+    global LISTING_COUNTER
+    LISTING_COUNTER += 1
+
+    caption = document.add_paragraph(f"Листинг {LISTING_COUNTER} - {filename}")
+    caption.paragraph_format.space_after = Pt(5)
+
+    code_paragraph = document.add_paragraph(code_content.rstrip(), style="Code")
+    code_paragraph.paragraph_format.left_indent = Cm(0.5)
+    code_paragraph.paragraph_format.right_indent = Cm(0.5)
+    add_border(code_paragraph)
 
 
 def insert_table(document: Document, table_html: str) -> None:
@@ -483,7 +509,7 @@ def process_markdown(
         elif element.name == "pre":
             code = element.find("code")
             if code:
-                insert_code_block(document, code.get_text())
+                insert_code_block(document, code.get_text(), filename="code")
 
 
 def convert_markdown_to_docx(
@@ -617,7 +643,7 @@ def convert_markdown_to_docx(
         elif element.name == "pre":
             code = element.find("code")
             if code:
-                insert_code_block(document, code.get_text())
+                insert_code_block(document, code.get_text(), filename="code")
 
     document.save(output_docx)
     print(f"Document saved as {output_docx}")
