@@ -23,7 +23,6 @@ BOTTOM_MARGIN = Cm(2.0)
 LEFT_MARGIN = Cm(3.0)
 RIGHT_MARGIN = Cm(1.0)
 FOOTER_DISTANCE = Cm(1.0)
-LIST_INDENT = Cm(0.63)
 IMAGE_WIDTH = Inches(6)
 HYPERLINK_COLOR = RGBColor(0, 0, 255)
 HEADING_COLOR = RGBColor(0, 0, 0)  # Black color for headings
@@ -40,12 +39,10 @@ HEADING_SIZE_REDUCTION = 2  # Size reduction per heading level
 ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
 ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
 ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
-MAX_HEADING_LEVEL = 9  # Maximum heading level
+MAX_HEADING_LEVEL = 6  # Maximum heading level
 
 
 def configure_document_style(document: Document) -> None:
-    """Configure the document style with predefined settings, including headings."""
-    # Configure the Normal style
     style = document.styles["Normal"]
     font = style.font
     font.name = FONT_NAME
@@ -55,7 +52,7 @@ def configure_document_style(document: Document) -> None:
     paragraph_format.line_spacing = LINE_SPACING
     paragraph_format.first_line_indent = FIRST_LINE_INDENT
 
-    for level in range(1, 10):
+    for level in range(1, 6 + 1):
         heading_style = document.styles[f"Heading {level}"]
         heading_font = heading_style.font
         heading_font.name = FONT_NAME
@@ -76,7 +73,6 @@ def configure_document_style(document: Document) -> None:
         rFonts.set(qn("w:cs"), FONT_NAME)
         rFonts.set(qn("w:eastAsia"), FONT_NAME)
 
-    # Configure document margins and footer
     for section in document.sections:
         section.top_margin = TOP_MARGIN
         section.bottom_margin = BOTTOM_MARGIN
@@ -207,7 +203,6 @@ def adjust_headers(html_content: str, level_increase: int) -> str:
 def insert_image(
     document: Document, image_path: str, width: Inches = IMAGE_WIDTH
 ) -> None:
-    """Insert an image into the document with specified width."""
     if os.path.exists(image_path):
         paragraph = document.add_paragraph()
         run = paragraph.add_run()
@@ -218,7 +213,6 @@ def insert_image(
 
 
 def insert_code_block(document: Document, code_content: str) -> None:
-    """Insert a code block into the document within a table without extra line breaks."""
     table = document.add_table(rows=1, cols=1)
     table.style = TABLE_STYLE
     cell = table.rows[0].cells[0]
@@ -234,7 +228,6 @@ def insert_code_block(document: Document, code_content: str) -> None:
 
 
 def insert_table(document: Document, table_html: str) -> None:
-    """Convert an HTML table to a DOCX table."""
     soup = BeautifulSoup(table_html, "html.parser")
     table = soup.find("table")
     if not table:
@@ -271,12 +264,10 @@ def process_list_element(
     markdown_file_path: str,
     root_directory: str,
 ) -> None:
-    """Process nested lists and add them to the document."""
     for li in list_element.find_all("li", recursive=False):
         paragraph = document.add_paragraph(
-            style="ListBullet" if list_type == "bullet" else "ListNumber"
+            style="List Bullet" if list_type == "bullet" else "List Number"
         )
-        paragraph.paragraph_format.left_indent = LIST_INDENT * nesting_level
 
         for child in li.children:
             if child.name == "a":
