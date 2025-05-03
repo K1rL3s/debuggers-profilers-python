@@ -35,8 +35,9 @@ MD_EXT = ".md"
 PY_EXT = ".py"
 CODE_BLOCK_SPACING = Pt(10)
 
-
 def configure_document_style(document: Document) -> None:
+    """Configure the document style with predefined settings, including headings."""
+    # Configure the Normal style
     style = document.styles["Normal"]
     font = style.font
     font.name = FONT_NAME
@@ -46,12 +47,24 @@ def configure_document_style(document: Document) -> None:
     paragraph_format.line_spacing = LINE_SPACING
     paragraph_format.first_line_indent = FIRST_LINE_INDENT
 
-    # Configure heading styles (1 through 6)
-    for level in range(1, 7):
+    # Configure heading styles (1 through 9)
+    for level in range(1, 10):
         heading_style = document.styles[f"Heading {level}"]
         heading_font = heading_style.font
         heading_font.name = FONT_NAME
-        heading_font.color.rgb = HEADING_COLOR  # Set to black
+        heading_font.color.rgb = HEADING_COLOR
+        # Ensure the font is applied at the XML level
+        if heading_style.element is not None:
+            rPr = heading_style.element.rPr
+            if rPr is None:
+                rPr = OxmlElement("w:rPr")
+                heading_style.element.append(rPr)
+            rFonts = rPr.find(qn("w:rFonts"))
+            if rFonts is None:
+                rFonts = OxmlElement("w:rFonts")
+                rPr.append(rFonts)
+            rFonts.set(qn("w:ascii"), FONT_NAME)
+            rFonts.set(qn("w:hAnsi"), FONT_NAME)
 
     # Configure document margins and footer
     for section in document.sections:
@@ -70,7 +83,6 @@ def configure_document_style(document: Document) -> None:
     section.footer_distance = FOOTER_DISTANCE
     section.different_first_page_header_footer = True
     document.sections[0].first_page_footer.paragraphs[0].text = ""
-
 
 def add_hyperlink(paragraph, url: str, text: str) -> None:
     """Add a clickable hyperlink to a paragraph."""
@@ -92,10 +104,10 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
     hyperlink.append(run_xml)
     paragraph._p.append(hyperlink)
 
-
 def extract_h1_from_markdown(
     file_path: str, fallback_text: Optional[str] = None
 ) -> str:
+    """Extract the first H1 heading from a Markdown file or return a fallback."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             markdown_content = f.read()
@@ -109,19 +121,19 @@ def extract_h1_from_markdown(
     except Exception:
         return fallback_text or os.path.basename(file_path)
 
-
 def adjust_headers(html_content: str, level_increase: int) -> str:
+    """Increase header levels in HTML content."""
     soup = BeautifulSoup(html_content, "html.parser")
-    for header in soup.find_all(re.compile("^h[1-6]$")):
+    for header in soup.find_all(re.compile("^h[1-9]$")):
         current_level = int(header.name[1])
-        new_level = min(current_level + level_increase, 6)
+        new_level = min(current_level + level_increase, 9)
         header.name = f"h{new_level}"
     return str(soup)
-
 
 def insert_image(
     document: Document, image_path: str, width: Inches = IMAGE_WIDTH
 ) -> None:
+    """Insert an image into the document with specified width."""
     if os.path.exists(image_path):
         paragraph = document.add_paragraph()
         run = paragraph.add_run()
@@ -130,8 +142,8 @@ def insert_image(
     else:
         document.add_paragraph(f"[Image not found: {image_path}]")
 
-
 def insert_code_block(document: Document, code_content: str) -> None:
+    """Insert a code block into the document within a table without extra line breaks."""
     table = document.add_table(rows=1, cols=1)
     table.style = TABLE_STYLE
     cell = table.rows[0].cells[0]
@@ -144,7 +156,6 @@ def insert_code_block(document: Document, code_content: str) -> None:
     cell.paragraphs[0].paragraph_format.space_after = CODE_BLOCK_SPACING
     cell.paragraphs[0].paragraph_format.line_spacing = 1.0
     cell.paragraphs[0].paragraph_format.first_line_indent = Cm(0)
-
 
 def insert_table(document: Document, table_html: str) -> None:
     """Convert an HTML table to a DOCX table."""
@@ -171,7 +182,6 @@ def insert_table(document: Document, table_html: str) -> None:
                 for paragraph in doc_table.rows[i].cells[j].paragraphs:
                     for run in paragraph.runs:
                         run.font.bold = True
-
 
 def process_list_element(
     list_element,
@@ -267,7 +277,6 @@ def process_list_element(
                 )
             else:
                 paragraph.add_run(str(child))
-
 
 def process_markdown(
     markdown_file_path: str,
@@ -394,7 +403,6 @@ def process_markdown(
             if code:
                 insert_code_block(document, code.get_text())
 
-
 def convert_markdown_to_docx(
     root_directory: str, output_docx: str, content_directory: str
 ) -> None:
@@ -514,7 +522,6 @@ def convert_markdown_to_docx(
 
     document.save(output_docx)
     print(f"Document saved as {output_docx}")
-
 
 if __name__ == "__main__":
     root_directory = "."
