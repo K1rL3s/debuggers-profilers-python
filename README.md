@@ -13,8 +13,8 @@
 
 ## 2. Ознакомление
 
-Разделим инструменты на три категории: отладчики, профайлеры, линтеры. \
-Кроме них также стоит упомянуть: **PyPy**, **Cython**, **Jython**, интеграции с **C/Rust/Fortran** 
+Разделим инструменты на три категории: отладчики, профайлеры, линтеры.
+Кроме них также стоит упомянуть: **PyPy**, **Cython**, **Jython** и интеграции с **C/Rust/Fortran** 
 
 ### Отладчики
 
@@ -85,7 +85,7 @@
 В Python такие профайлеры могут собирать полные стектрейсы, что даёт более глубокое понимание происходящего в коде.
 
 
-##### [py-spy](./profilers/py-spy.md)
+#### [py-spy](./profilers/py-spy.md)
 
 
 #### Событийные профайлеры
@@ -110,15 +110,15 @@
 Удобные интерфейсы для анализа и обилие инструментов делают их популярными среди разработчиков.
 
 
-##### [cProfile](./profilers/cProfile.md)
+#### [cProfile](./profilers/cProfile.md)
 
-##### [timeit](./profilers/timeit.md)
+#### [timeit](./profilers/timeit.md)
 
-##### [line_profiler](./profilers/line_profiler.md)
+#### [line_profiler](./profilers/line_profiler.md)
 
-##### [memory_profiler](./profilers/memory_profiler.md)
+#### [memory_profiler](./profilers/memory_profiler.md)
 
-##### [pyheat](./profilers/pyheat.md)
+#### [pyheat](./profilers/pyheat.md)
 
 
 ### Линтеры
