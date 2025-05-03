@@ -16,13 +16,13 @@
 Напишите C-код, определите функции, скомпилируйте в общую библиотеку (.so/.dll) и импортируйте в Python с помощью `ctypes`, `cffi` или Python/C API.
 
 ## Примеры
-[c_simple.c](../examples/c_simple.c)
-[c_ctypes.py](../examples/c_ctypes.py)
-[c_cffi.py](../examples/c_cffi.py)
+[c_simple.c](../examples/c/simple.c)
+[c_ctypes.py](../examples/c/c_types.py)
+[c_cffi.py](../examples/c/c_cffi.py)
 
-[c_capi.c](../examples/c_capi.c)
-[c_capi_setup.py](../examples/c_capi_setup.py)
-[c_capi_file.py](../examples/c_capi_file.py)
+[c_capi.c](../examples/c/capi.c)
+[c_capi_setup.py](../examples/c/capi_setup.py)
+[c_capi_file.py](../examples/c/capi_file.py)
 
 ## Плюсы
 - Высокая производительность для численных задач.
