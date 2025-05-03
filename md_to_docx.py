@@ -34,7 +34,11 @@ OUTPUT_FILE = "output.docx"
 MD_EXT = ".md"
 PY_EXT = ".py"
 CODE_BLOCK_SPACING = Pt(10)
-START_HEADING_SIZE = 28
+HEADING_BASE_SIZE = 28  # Base font size for H1 in points
+HEADING_SIZE_REDUCTION = 2  # Size reduction per heading level
+ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
+ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
+ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
 
 
 def configure_document_style(document: Document) -> None:
@@ -53,7 +57,7 @@ def configure_document_style(document: Document) -> None:
         heading_style = document.styles[f"Heading {level}"]
         heading_font = heading_style.font
         heading_font.name = FONT_NAME
-        heading_font.size = Pt(START_HEADING_SIZE - level * 2)
+        heading_font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
         heading_font.color.rgb = HEADING_COLOR
         heading_font.bold = True if level <= 3 else False
 
@@ -110,6 +114,59 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
     paragraph._p.append(hyperlink)
 
 
+def format_heading(heading, level: int) -> None:
+    """Apply formatting to a heading paragraph."""
+    for run in heading.runs:
+        run.font.name = FONT_NAME
+        run.font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
+        run.font.color.rgb = HEADING_COLOR
+
+
+def handle_link(
+    href: str,
+    base_path: str,
+    document: Document,
+    paragraph,
+    content_directory: str,
+    root_directory: str,
+    level_increase: int,
+    processed_files: Set[str],
+    link_text: str,
+) -> bool:
+    """Handle Markdown links to .py, .md files, or external URLs."""
+    if href.endswith(PY_EXT):
+        py_path = os.path.join(base_path, href)
+        if os.path.exists(py_path):
+            with open(py_path, "r", encoding="utf-8") as f:
+                code_content = f.read()
+            insert_code_block(document, code_content)
+        else:
+            paragraph.add_run(ERROR_PY_NOT_FOUND.format(href))
+        return True
+    elif href.endswith(MD_EXT):
+        md_path = os.path.join(base_path, href)
+        if os.path.exists(md_path):
+            heading_text = extract_h1_from_markdown(md_path, link_text)
+            heading = document.add_heading(heading_text, level=level_increase + 1)
+            format_heading(heading, level_increase + 1)
+            process_markdown(
+                md_path,
+                root_directory,
+                document,
+                content_directory,
+                level_increase=level_increase + 1,
+                skip_h1=True,
+                processed_files=processed_files,
+            )
+        else:
+            paragraph.add_run(ERROR_MD_NOT_FOUND.format(href))
+        return True
+    elif href:
+        add_hyperlink(paragraph, href, link_text)
+        return True
+    return False
+
+
 def extract_h1_from_markdown(
     file_path: str, fallback_text: Optional[str] = None
 ) -> str:
@@ -148,7 +205,7 @@ def insert_image(
         run.add_picture(image_path, width=width)
         paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     else:
-        document.add_paragraph(f"[Image not found: {image_path}]")
+        document.add_paragraph(ERROR_IMAGE_NOT_FOUND.format(image_path))
 
 
 def insert_code_block(document: Document, code_content: str) -> None:
@@ -215,35 +272,21 @@ def process_list_element(
         for child in li.children:
             if child.name == "a":
                 href = child.get("href", "")
-                if href and href.endswith(PY_EXT):
-                    py_path = os.path.join(os.path.dirname(markdown_file_path), href)
-                    if os.path.exists(py_path):
-                        with open(py_path, "r", encoding="utf-8") as f:
-                            code_content = f.read()
-                        insert_code_block(document, code_content)
-                    else:
-                        paragraph.add_run(f"[Python file not found: {href}]")
-                elif href and href.endswith(MD_EXT):
-                    md_path = os.path.join(os.path.dirname(markdown_file_path), href)
-                    if os.path.exists(md_path):
-                        link_text = child.get_text()
-                        heading_text = extract_h1_from_markdown(md_path, link_text)
-                        document.add_heading(heading_text, level=level_increase + 1)
-                        process_markdown(
-                            md_path,
-                            root_directory,
-                            document,
-                            content_directory,
-                            level_increase=level_increase + 1,
-                            skip_h1=True,
-                            processed_files=processed_files,
-                        )
-                    else:
-                        paragraph.add_run(f"[Markdown file not found: {href}]")
-                elif href:
-                    add_hyperlink(paragraph, href, child.get_text())
-                else:
-                    paragraph.add_run(child.get_text())
+                link_text = child.get_text()
+                handled = handle_link(
+                    href,
+                    os.path.dirname(markdown_file_path),
+                    document,
+                    paragraph,
+                    content_directory,
+                    root_directory,
+                    level_increase,
+                    processed_files,
+                    link_text,
+                )
+                if handled:
+                    continue
+                paragraph.add_run(link_text)
             elif child.name == "strong":
                 run = paragraph.add_run(child.get_text())
                 run.bold = True
@@ -326,54 +369,27 @@ def process_markdown(
         if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
             level = int(element.name[1])
             heading = document.add_heading(element.get_text(), level=level)
-            for run in heading.runs:
-                run.font.name = FONT_NAME
-                run.font.size = Pt(START_HEADING_SIZE - level * 2)
-                run.font.color.rgb = HEADING_COLOR
+            format_heading(heading, level)
         elif element.name == "p":
             paragraph = document.add_paragraph()
             for child in element.children:
                 if child.name == "a":
                     href = child.get("href", "")
-                    if href and href.endswith(PY_EXT):
-                        py_path = os.path.join(
-                            os.path.dirname(markdown_file_path), href
-                        )
-                        if os.path.exists(py_path):
-                            with open(py_path, "r", encoding="utf-8") as f:
-                                code_content = f.read()
-                            insert_code_block(document, code_content)
-                        else:
-                            paragraph.add_run(f"[Python file not found: {href}]")
-                    elif href and href.endswith(MD_EXT):
-                        md_path = os.path.join(
-                            os.path.dirname(markdown_file_path), href
-                        )
-                        if os.path.exists(md_path):
-                            link_text = child.get_text()
-                            heading_text = extract_h1_from_markdown(md_path, link_text)
-                            heading = document.add_heading(
-                                heading_text, level=level_increase + 1
-                            )
-                            for run in heading.runs:
-                                run.font.name = FONT_NAME
-                                run.font.size = Pt(START_HEADING_SIZE - (level_increase + 1) * 2)
-                                run.font.color.rgb = HEADING_COLOR
-                            process_markdown(
-                                md_path,
-                                root_directory,
-                                document,
-                                content_directory,
-                                level_increase=level_increase + 1,
-                                skip_h1=True,
-                                processed_files=processed_files,
-                            )
-                        else:
-                            paragraph.add_run(f"[Markdown file not found: {href}]")
-                    elif href:
-                        add_hyperlink(paragraph, href, child.get_text())
-                    else:
-                        paragraph.add_run(child.get_text())
+                    link_text = child.get_text()
+                    handled = handle_link(
+                        href,
+                        os.path.dirname(markdown_file_path),
+                        document,
+                        paragraph,
+                        content_directory,
+                        root_directory,
+                        level_increase,
+                        processed_files,
+                        link_text,
+                    )
+                    if handled:
+                        continue
+                    paragraph.add_run(link_text)
                 elif child.name == "strong":
                     run = paragraph.add_run(child.get_text())
                     run.bold = True
@@ -429,6 +445,8 @@ def process_markdown(
 def convert_markdown_to_docx(
     root_directory: str, output_docx: str, content_directory: str
 ) -> None:
+    """Convert Markdown files to a single DOCX file."""
+    # Create a new document with custom styles
     document = Document()
     configure_document_style(document)
 
@@ -454,53 +472,27 @@ def convert_markdown_to_docx(
             heading = document.add_heading(
                 element.get_text(), level=current_heading_level
             )
-            for run in heading.runs:
-                run.font.name = FONT_NAME
-                run.font.size = Pt(START_HEADING_SIZE - current_heading_level * 2)
-                run.font.color.rgb = HEADING_COLOR
+            format_heading(heading, current_heading_level)
         elif element.name == "p":
             paragraph = document.add_paragraph()
             for child in element.children:
                 if child.name == "a":
                     href = child.get("href", "")
-                    if href and href.endswith(PY_EXT):
-                        py_path = os.path.join(root_directory, href.lstrip("./"))
-                        if os.path.exists(py_path):
-                            with open(py_path, "r", encoding="utf-8") as f:
-                                code_content = f.read()
-                            insert_code_block(document, code_content)
-                        else:
-                            paragraph.add_run(f"[Python file not found: {href}]")
-                    elif href and href.endswith(MD_EXT):
-                        md_path = href
-                        full_md_path = os.path.join(root_directory, md_path)
-                        if os.path.exists(full_md_path):
-                            link_text = child.get_text()
-                            heading_text = extract_h1_from_markdown(
-                                full_md_path, link_text
-                            )
-                            heading = document.add_heading(
-                                heading_text, level=current_heading_level + 1
-                            )
-                            for run in heading.runs:
-                                run.font.name = FONT_NAME
-                                run.font.size = Pt(START_HEADING_SIZE - (current_heading_level + 1) * 2)
-                                run.font.color.rgb = HEADING_COLOR
-                            process_markdown(
-                                full_md_path,
-                                root_directory,
-                                document,
-                                content_directory,
-                                level_increase=current_heading_level + 1,
-                                skip_h1=True,
-                                processed_files=processed_files,
-                            )
-                        else:
-                            paragraph.add_run(f"[Markdown file not found: {md_path}]")
-                    elif href:
-                        add_hyperlink(paragraph, href, child.get_text())
-                    else:
-                        paragraph.add_run(child.get_text())
+                    link_text = child.get_text()
+                    handled = handle_link(
+                        href,
+                        root_directory,
+                        document,
+                        paragraph,
+                        content_directory,
+                        root_directory,
+                        current_heading_level,
+                        processed_files,
+                        link_text,
+                    )
+                    if handled:
+                        continue
+                    paragraph.add_run(link_text)
                 elif child.name == "strong":
                     run = paragraph.add_run(child.get_text())
                     run.bold = True
