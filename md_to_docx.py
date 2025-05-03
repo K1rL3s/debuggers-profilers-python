@@ -40,6 +40,7 @@ HEADING_SIZE_REDUCTION = 2  # Size reduction per heading level
 ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
 ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
 ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
+MAX_HEADING_LEVEL = 9  # Maximum heading level
 
 
 def configure_document_style(document: Document) -> None:
@@ -152,6 +153,7 @@ def handle_link(
             new_level = (
                 heading_level if heading_level is not None else level_increase + 1
             )
+            new_level = min(new_level, MAX_HEADING_LEVEL)  # Limit to max level
             heading = document.add_heading(heading_text, level=new_level)
             format_heading(heading, new_level)
             adjusted_level_increase = (
@@ -194,11 +196,10 @@ def extract_h1_from_markdown(
 
 
 def adjust_headers(html_content: str, level_increase: int) -> str:
-    """Increase header levels in HTML content."""
     soup = BeautifulSoup(html_content, "html.parser")
     for header in soup.find_all(re.compile("^h[1-9]$")):
         current_level = int(header.name[1])
-        new_level = min(current_level + level_increase, 9)
+        new_level = min(current_level + level_increase, MAX_HEADING_LEVEL)
         header.name = f"h{new_level}"
     return str(soup)
 
