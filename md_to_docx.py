@@ -247,7 +247,7 @@ def handle_link(
     heading_level: Optional[int] = None,
 ) -> bool:
     if is_code_extension(href):
-        py_path = os.path.join(base_path, href)
+        py_path = os.path.normpath(os.path.join(base_path, href))
         if os.path.exists(py_path):
             with open(py_path, "r", encoding="utf-8") as f:
                 code_content = f.read()
@@ -257,7 +257,7 @@ def handle_link(
             paragraph.add_run(ERROR_PY_NOT_FOUND.format(href))
         return True
     elif href.endswith(MD_EXT):
-        md_path = os.path.join(base_path, href)
+        md_path = os.path.normpath(os.path.join(base_path, href))
         if os.path.exists(md_path):
             heading_text = extract_h1_from_markdown(md_path, link_text)
             new_level = (
@@ -281,7 +281,7 @@ def handle_link(
             paragraph.add_run(ERROR_MD_NOT_FOUND.format(href))
         return True
     elif is_image_extension(href):
-        image_path = os.path.join(base_path, href)
+        image_path = os.path.normpath(os.path.join(base_path, href))
         description = link_text
         insert_image(document, image_path, description)
         return True
@@ -362,7 +362,9 @@ def process_list_element(
                 run.font.size = CODE_FONT_SIZE
             elif child.name == "img":
                 img_src = child.get("src", "")
-                img_path = img_src
+                img_path = os.path.normpath(
+                    os.path.join(os.path.dirname(markdown_file_path), img_src)
+                )
                 insert_image(
                     document, img_path, description=child.get("alt", "Изображение")
                 )
@@ -491,7 +493,9 @@ def process_markdown(
                     run.font.size = CODE_FONT_SIZE
                 elif child.name == "img":
                     img_src = child.get("src", "")
-                    img_path = img_src
+                    img_path = os.path.normpath(
+                        os.path.join(os.path.dirname(markdown_file_path), img_src)
+                    )
                     insert_image(
                         document, img_path, description=child.get("alt", "Изображение")
                     )
@@ -527,7 +531,7 @@ def process_markdown(
                 insert_code_block(document, code.get_text(), filename="code")
 
 
-def convert_markdown_to_docx(root_directory: str, output_docx: str, ) -> None:
+def convert_markdown_to_docx(root_directory: str, output_docx: str) -> None:
     document = Document()
     configure_document_style(document)
 
@@ -615,8 +619,9 @@ def convert_markdown_to_docx(root_directory: str, output_docx: str, ) -> None:
                     run.font.size = CODE_FONT_SIZE
                 elif child.name == "img":
                     img_src = child.get("src", "")
+                    img_path = os.path.normpath(os.path.join(root_directory, img_src))
                     insert_image(
-                        document, img_src, description=child.get("alt", "Изображение")
+                        document, img_path, description=child.get("alt", "Изображение")
                     )
                 else:
                     paragraph.add_run(str(child))
