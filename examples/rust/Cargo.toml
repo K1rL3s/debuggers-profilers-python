@@ -1,0 +1,12 @@
+[package]
+name = "rust_uuid"
+version = "0.1.0"
+edition = "2025"
+
+[lib]
+name = "rust_uuid"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }
+uuid = { version = "1.10", features = ["v4"] }
