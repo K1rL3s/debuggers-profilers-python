@@ -134,16 +134,16 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
     paragraph._p.append(hyperlink)
 
 
-def add_border(paragraph) -> None:
+def add_border_to_paragraph(paragraph) -> None:
     """Add a border to a paragraph."""
     pPr = paragraph._p.get_or_add_pPr()
     pBdr = OxmlElement("w:pBdr")
-    for border_name in ["top", "left", "bottom", "right"]:
-        border = OxmlElement(f"w:{border_name}")
+    for border_name in ["w:top", "w:left", "w:bottom", "w:right"]:
+        border = OxmlElement(border_name)
         border.set(qn("w:val"), "single")
-        border.set(qn("w:sz"), "4")  # Border width
-        border.set(qn("w:space"), "4")  # Space between text and border
-        border.set(qn("w:color"), "000000")  # Black border
+        border.set(qn("w:sz"), "4")
+        border.set(qn("w:space"), "4")
+        border.set(qn("w:color"), "000000")
         pBdr.append(border)
     pPr.append(pBdr)
 
@@ -154,6 +154,27 @@ def format_heading(heading, level: int) -> None:
         run.font.name = FONT_NAME
         run.font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
         run.font.color.rgb = HEADING_COLOR
+
+
+def insert_code_block(
+    document: Document, code_content: str, filename: str = "code"
+) -> None:
+    """Insert a code block with a border and a listing caption."""
+    global LISTING_COUNTER
+    LISTING_COUNTER += 1
+
+    # Add caption paragraph
+    caption = document.add_paragraph()
+    caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = caption.add_run(f"Листинг {LISTING_COUNTER} - {filename}")
+    run.italic = True
+    run.font.name = FONT_NAME
+    run.font.size = FONT_SIZE
+
+    # Add code block paragraph with border
+    paragraph = document.add_paragraph(style="Code")
+    run = paragraph.add_run(code_content.rstrip())
+    add_border_to_paragraph(paragraph)
 
 
 def handle_link(
@@ -246,22 +267,6 @@ def insert_image(
         paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     else:
         document.add_paragraph(ERROR_IMAGE_NOT_FOUND.format(image_path))
-
-
-def insert_code_block(
-    document: Document, code_content: str, filename: str = "code"
-) -> None:
-    """Insert a code block with a border and a caption 'Листинг X - filename'."""
-    global LISTING_COUNTER
-    LISTING_COUNTER += 1
-
-    caption = document.add_paragraph(f"Листинг {LISTING_COUNTER} - {filename}")
-    caption.paragraph_format.space_after = Pt(5)
-
-    code_paragraph = document.add_paragraph(code_content.rstrip(), style="Code")
-    code_paragraph.paragraph_format.left_indent = Cm(0.5)
-    code_paragraph.paragraph_format.right_indent = Cm(0.5)
-    add_border(code_paragraph)
 
 
 def insert_table(document: Document, table_html: str) -> None:
