@@ -25,6 +25,7 @@ FOOTER_DISTANCE = Cm(1.0)
 LIST_INDENT = Cm(0.63)
 IMAGE_WIDTH = Inches(6)
 HYPERLINK_COLOR = RGBColor(0, 0, 255)
+HEADING_COLOR = RGBColor(0, 0, 0)  # Black color for headings
 TABLE_STYLE = "Table Grid"
 MARKDOWN_EXTENSIONS = ["extra", "fenced_code", "tables"]
 README_FILE = "README.md"
@@ -32,11 +33,10 @@ CONTENT_DIR = "./content"
 OUTPUT_FILE = "output.docx"
 MD_EXT = ".md"
 PY_EXT = ".py"
-CODE_BLOCK_SPACING = Pt(10)  # Spacing between code blocks
+CODE_BLOCK_SPACING = Pt(10)
 
 
 def configure_document_style(document: Document) -> None:
-    """Configure the document style with predefined settings."""
     style = document.styles["Normal"]
     font = style.font
     font.name = FONT_NAME
@@ -46,6 +46,14 @@ def configure_document_style(document: Document) -> None:
     paragraph_format.line_spacing = LINE_SPACING
     paragraph_format.first_line_indent = FIRST_LINE_INDENT
 
+    # Configure heading styles (1 through 6)
+    for level in range(1, 7):
+        heading_style = document.styles[f"Heading {level}"]
+        heading_font = heading_style.font
+        heading_font.name = FONT_NAME
+        heading_font.color.rgb = HEADING_COLOR  # Set to black
+
+    # Configure document margins and footer
     for section in document.sections:
         section.top_margin = TOP_MARGIN
         section.bottom_margin = BOTTOM_MARGIN
@@ -88,7 +96,6 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
 def extract_h1_from_markdown(
     file_path: str, fallback_text: Optional[str] = None
 ) -> str:
-    """Extract the first H1 heading from a Markdown file or return a fallback."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             markdown_content = f.read()
@@ -104,7 +111,6 @@ def extract_h1_from_markdown(
 
 
 def adjust_headers(html_content: str, level_increase: int) -> str:
-    """Increase header levels in HTML content."""
     soup = BeautifulSoup(html_content, "html.parser")
     for header in soup.find_all(re.compile("^h[1-6]$")):
         current_level = int(header.name[1])
@@ -116,7 +122,6 @@ def adjust_headers(html_content: str, level_increase: int) -> str:
 def insert_image(
     document: Document, image_path: str, width: Inches = IMAGE_WIDTH
 ) -> None:
-    """Insert an image into the document with specified width."""
     if os.path.exists(image_path):
         paragraph = document.add_paragraph()
         run = paragraph.add_run()
