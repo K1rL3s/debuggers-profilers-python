@@ -34,6 +34,7 @@ OUTPUT_FILE = "output.docx"
 MD_EXT = ".md"
 PY_EXT = ".py"
 CODE_BLOCK_SPACING = Pt(10)
+START_HEADING_SIZE = 28
 
 
 def configure_document_style(document: Document) -> None:
@@ -48,24 +49,26 @@ def configure_document_style(document: Document) -> None:
     paragraph_format.line_spacing = LINE_SPACING
     paragraph_format.first_line_indent = FIRST_LINE_INDENT
 
-    # Configure heading styles (1 through 9)
     for level in range(1, 10):
         heading_style = document.styles[f"Heading {level}"]
         heading_font = heading_style.font
         heading_font.name = FONT_NAME
+        heading_font.size = Pt(START_HEADING_SIZE - level * 2)
         heading_font.color.rgb = HEADING_COLOR
-        # Ensure the font is applied at the XML level
-        if heading_style.element is not None:
-            rPr = heading_style.element.rPr
-            if rPr is None:
-                rPr = OxmlElement("w:rPr")
-                heading_style.element.append(rPr)
-            rFonts = rPr.find(qn("w:rFonts"))
-            if rFonts is None:
-                rFonts = OxmlElement("w:rFonts")
-                rPr.append(rFonts)
-            rFonts.set(qn("w:ascii"), FONT_NAME)
-            rFonts.set(qn("w:hAnsi"), FONT_NAME)
+        heading_font.bold = True if level <= 3 else False
+
+        rPr = heading_style.element.rPr
+        if rPr is None:
+            rPr = OxmlElement("w:rPr")
+            heading_style.element.append(rPr)
+        rFonts = rPr.find(qn("w:rFonts"))
+        if rFonts is None:
+            rFonts = OxmlElement("w:rFonts")
+            rPr.append(rFonts)
+        rFonts.set(qn("w:ascii"), FONT_NAME)
+        rFonts.set(qn("w:hAnsi"), FONT_NAME)
+        rFonts.set(qn("w:cs"), FONT_NAME)
+        rFonts.set(qn("w:eastAsia"), FONT_NAME)
 
     # Configure document margins and footer
     for section in document.sections:
@@ -322,7 +325,11 @@ def process_markdown(
     for element in soup.children:
         if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
             level = int(element.name[1])
-            document.add_heading(element.get_text(), level=level)
+            heading = document.add_heading(element.get_text(), level=level)
+            for run in heading.runs:
+                run.font.name = FONT_NAME
+                run.font.size = Pt(START_HEADING_SIZE - level * 2)
+                run.font.color.rgb = HEADING_COLOR
         elif element.name == "p":
             paragraph = document.add_paragraph()
             for child in element.children:
@@ -345,7 +352,13 @@ def process_markdown(
                         if os.path.exists(md_path):
                             link_text = child.get_text()
                             heading_text = extract_h1_from_markdown(md_path, link_text)
-                            document.add_heading(heading_text, level=level_increase + 1)
+                            heading = document.add_heading(
+                                heading_text, level=level_increase + 1
+                            )
+                            for run in heading.runs:
+                                run.font.name = FONT_NAME
+                                run.font.size = Pt(START_HEADING_SIZE - (level_increase + 1) * 2)
+                                run.font.color.rgb = HEADING_COLOR
                             process_markdown(
                                 md_path,
                                 root_directory,
@@ -416,7 +429,6 @@ def process_markdown(
 def convert_markdown_to_docx(
     root_directory: str, output_docx: str, content_directory: str
 ) -> None:
-    """Convert Markdown files to a single DOCX file."""
     document = Document()
     configure_document_style(document)
 
@@ -439,7 +451,13 @@ def convert_markdown_to_docx(
     for element in soup.children:
         if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
             current_heading_level = int(element.name[1])
-            document.add_heading(element.get_text(), level=current_heading_level)
+            heading = document.add_heading(
+                element.get_text(), level=current_heading_level
+            )
+            for run in heading.runs:
+                run.font.name = FONT_NAME
+                run.font.size = Pt(START_HEADING_SIZE - current_heading_level * 2)
+                run.font.color.rgb = HEADING_COLOR
         elif element.name == "p":
             paragraph = document.add_paragraph()
             for child in element.children:
@@ -461,9 +479,13 @@ def convert_markdown_to_docx(
                             heading_text = extract_h1_from_markdown(
                                 full_md_path, link_text
                             )
-                            document.add_heading(
+                            heading = document.add_heading(
                                 heading_text, level=current_heading_level + 1
                             )
+                            for run in heading.runs:
+                                run.font.name = FONT_NAME
+                                run.font.size = Pt(START_HEADING_SIZE - (current_heading_level + 1) * 2)
+                                run.font.color.rgb = HEADING_COLOR
                             process_markdown(
                                 full_md_path,
                                 root_directory,
