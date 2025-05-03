@@ -29,7 +29,6 @@ HEADING_COLOR = RGBColor(0, 0, 0)  # Black color for headings
 TABLE_STYLE = "Table Grid"
 MARKDOWN_EXTENSIONS = ["extra", "fenced_code", "tables"]
 README_FILE = "README.md"
-CONTENT_DIR = "./content"
 OUTPUT_FILE = f"Lesovoy_{int(time.time())}.docx"
 MD_EXT = ".md"
 PY_EXT = ".py"
@@ -46,12 +45,18 @@ ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
 ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
 MAX_HEADING_LEVEL = 6  # Maximum heading level
 CODE_EXTENSIONS = (PY_EXT, PYX_EXT, C_EXT, H_EXT, RS_EXT, TOML_EXT)
+IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
 LISTING_COUNTER = 0
+FIGURE_COUNTER = 0
 
 
 def is_code_extension(filename: str) -> bool:
     return any(filename.endswith(ext) for ext in CODE_EXTENSIONS)
+
+
+def is_image_extension(filename: str) -> bool:
+    return any(filename.endswith(ext) for ext in IMAGE_EXTENSIONS)
 
 
 def configure_document_style(document: Document) -> None:
@@ -94,6 +99,7 @@ def configure_document_style(document: Document) -> None:
     code_style.paragraph_format.line_spacing = 1.0
     code_style.paragraph_format.space_before = Pt(0)
     code_style.paragraph_format.space_after = CODE_BLOCK_SPACING
+    code_style.paragraph_format.first_line_indent = Cm(0)
 
     for section in document.sections:
         section.top_margin = TOP_MARGIN
@@ -134,6 +140,14 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
     paragraph._p.append(hyperlink)
 
 
+def format_heading(heading, level: int) -> None:
+    """Apply formatting to a heading paragraph."""
+    for run in heading.runs:
+        run.font.name = FONT_NAME
+        run.font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
+        run.font.color.rgb = HEADING_COLOR
+
+
 def add_border_to_paragraph(paragraph) -> None:
     """Add a border to a paragraph."""
     pPr = paragraph._p.get_or_add_pPr()
@@ -146,14 +160,6 @@ def add_border_to_paragraph(paragraph) -> None:
         border.set(qn("w:color"), "000000")
         pBdr.append(border)
     pPr.append(pBdr)
-
-
-def format_heading(heading, level: int) -> None:
-    """Apply formatting to a heading paragraph."""
-    for run in heading.runs:
-        run.font.name = FONT_NAME
-        run.font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
-        run.font.color.rgb = HEADING_COLOR
 
 
 def insert_code_block(
@@ -171,10 +177,62 @@ def insert_code_block(
     run.font.name = FONT_NAME
     run.font.size = FONT_SIZE
 
-    # Add code block paragraph with border
     paragraph = document.add_paragraph(style="Code")
     run = paragraph.add_run(code_content.rstrip())
     add_border_to_paragraph(paragraph)
+
+
+def insert_image(
+    document: Document,
+    image_path: str,
+    description: str = "Изображение",
+    width: Inches = IMAGE_WIDTH,
+) -> None:
+    """Insert an image with a figure caption."""
+    global FIGURE_COUNTER
+    if not os.path.exists(image_path):
+        document.add_paragraph(ERROR_IMAGE_NOT_FOUND.format(image_path))
+        return
+
+    FIGURE_COUNTER += 1
+
+    caption = document.add_paragraph()
+    caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = caption.add_run(f"Рисунок {FIGURE_COUNTER} - {description}")
+    run.italic = True
+    run.font.name = FONT_NAME
+    run.font.size = FONT_SIZE
+
+    paragraph = document.add_paragraph()
+    run = paragraph.add_run()
+    run.add_picture(image_path, width=width)
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+
+def insert_table(document: Document, table_html: str) -> None:
+    soup = BeautifulSoup(table_html, "html.parser")
+    table = soup.find("table")
+    if not table:
+        return
+
+    rows = table.find_all("tr")
+    if not rows:
+        return
+
+    num_rows = len(rows)
+    num_cols = max(len(row.find_all(["td", "th"])) for row in rows)
+    doc_table = document.add_table(rows=num_rows, cols=num_cols)
+    doc_table.style = TABLE_STYLE
+
+    for i, row in enumerate(rows):
+        cells = row.find_all(["td", "th"])
+        for j, cell in enumerate(cells):
+            cell_text = cell.get_text(strip=True)
+            doc_table.rows[i].cells[j].text = cell_text
+            if cell.name == "th":
+                for paragraph in doc_table.rows[i].cells[j].paragraphs:
+                    for run in paragraph.runs:
+                        run.font.bold = True
 
 
 def handle_link(
@@ -182,7 +240,6 @@ def handle_link(
     base_path: str,
     document: Document,
     paragraph,
-    content_directory: str,
     root_directory: str,
     level_increase: int,
     processed_files: Set[str],
@@ -216,13 +273,17 @@ def handle_link(
                 md_path,
                 root_directory,
                 document,
-                content_directory,
                 level_increase=adjusted_level_increase,
                 skip_h1=True,
                 processed_files=processed_files,
             )
         else:
             paragraph.add_run(ERROR_MD_NOT_FOUND.format(href))
+        return True
+    elif is_image_extension(href):
+        image_path = os.path.join(base_path, href)
+        description = link_text
+        insert_image(document, image_path, description)
         return True
     elif href:
         add_hyperlink(paragraph, href, link_text)
@@ -257,48 +318,9 @@ def adjust_headers(html_content: str, level_increase: int) -> str:
     return str(soup)
 
 
-def insert_image(
-    document: Document, image_path: str, width: Inches = IMAGE_WIDTH
-) -> None:
-    if os.path.exists(image_path):
-        paragraph = document.add_paragraph()
-        run = paragraph.add_run()
-        run.add_picture(image_path, width=width)
-        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    else:
-        document.add_paragraph(ERROR_IMAGE_NOT_FOUND.format(image_path))
-
-
-def insert_table(document: Document, table_html: str) -> None:
-    soup = BeautifulSoup(table_html, "html.parser")
-    table = soup.find("table")
-    if not table:
-        return
-
-    rows = table.find_all("tr")
-    if not rows:
-        return
-
-    num_rows = len(rows)
-    num_cols = max(len(row.find_all(["td", "th"])) for row in rows)
-    doc_table = document.add_table(rows=num_rows, cols=num_cols)
-    doc_table.style = TABLE_STYLE
-
-    for i, row in enumerate(rows):
-        cells = row.find_all(["td", "th"])
-        for j, cell in enumerate(cells):
-            cell_text = cell.get_text(strip=True)
-            doc_table.rows[i].cells[j].text = cell_text
-            if cell.name == "th":
-                for paragraph in doc_table.rows[i].cells[j].paragraphs:
-                    for run in paragraph.runs:
-                        run.font.bold = True
-
-
 def process_list_element(
     list_element,
     document: Document,
-    content_directory: str,
     level_increase: int,
     processed_files: Set[str],
     list_type: str,
@@ -320,7 +342,6 @@ def process_list_element(
                     os.path.dirname(markdown_file_path),
                     document,
                     paragraph,
-                    content_directory,
                     root_directory,
                     level_increase,
                     processed_files,
@@ -341,17 +362,14 @@ def process_list_element(
                 run.font.size = CODE_FONT_SIZE
             elif child.name == "img":
                 img_src = child.get("src", "")
-                img_path = (
-                    os.path.join(content_directory, img_src)
-                    if not os.path.isabs(img_src)
-                    else img_src
+                img_path = img_src
+                insert_image(
+                    document, img_path, description=child.get("alt", "Изображение")
                 )
-                insert_image(document, img_path)
             elif child.name == "ul":
                 process_list_element(
                     child,
                     document,
-                    content_directory,
                     level_increase,
                     processed_files,
                     list_type="bullet",
@@ -363,7 +381,6 @@ def process_list_element(
                 process_list_element(
                     child,
                     document,
-                    content_directory,
                     level_increase,
                     processed_files,
                     list_type="number",
@@ -379,7 +396,6 @@ def process_markdown(
     markdown_file_path: str,
     root_directory: str,
     document: Document,
-    content_directory: str,
     level_increase: int = 0,
     skip_h1: bool = False,
     processed_files: Optional[Set[str]] = None,
@@ -423,7 +439,6 @@ def process_markdown(
                         os.path.dirname(markdown_file_path),
                         document,
                         paragraph,
-                        content_directory,
                         root_directory,
                         level_increase,
                         processed_files,
@@ -456,7 +471,6 @@ def process_markdown(
                         os.path.dirname(markdown_file_path),
                         document,
                         paragraph,
-                        content_directory,
                         root_directory,
                         level_increase,
                         processed_files,
@@ -477,19 +491,16 @@ def process_markdown(
                     run.font.size = CODE_FONT_SIZE
                 elif child.name == "img":
                     img_src = child.get("src", "")
-                    img_path = (
-                        os.path.join(content_directory, img_src)
-                        if not os.path.isabs(img_src)
-                        else img_src
+                    img_path = img_src
+                    insert_image(
+                        document, img_path, description=child.get("alt", "Изображение")
                     )
-                    insert_image(document, img_path)
                 else:
                     paragraph.add_run(str(child))
         elif element.name == "ul":
             process_list_element(
                 element,
                 document,
-                content_directory,
                 level_increase,
                 processed_files,
                 list_type="bullet",
@@ -501,7 +512,6 @@ def process_markdown(
             process_list_element(
                 element,
                 document,
-                content_directory,
                 level_increase,
                 processed_files,
                 list_type="number",
@@ -517,11 +527,7 @@ def process_markdown(
                 insert_code_block(document, code.get_text(), filename="code")
 
 
-def convert_markdown_to_docx(
-    root_directory: str, output_docx: str, content_directory: str
-) -> None:
-    """Convert Markdown files to a single DOCX file."""
-    # Create a new document with custom styles
+def convert_markdown_to_docx(root_directory: str, output_docx: str, ) -> None:
     document = Document()
     configure_document_style(document)
 
@@ -557,7 +563,6 @@ def convert_markdown_to_docx(
                         root_directory,
                         document,
                         paragraph,
-                        content_directory,
                         root_directory,
                         current_heading_level,
                         processed_files,
@@ -590,7 +595,6 @@ def convert_markdown_to_docx(
                         root_directory,
                         document,
                         paragraph,
-                        content_directory,
                         root_directory,
                         current_heading_level,
                         processed_files,
@@ -611,19 +615,15 @@ def convert_markdown_to_docx(
                     run.font.size = CODE_FONT_SIZE
                 elif child.name == "img":
                     img_src = child.get("src", "")
-                    img_path = (
-                        os.path.join(content_directory, img_src)
-                        if not os.path.isabs(img_src)
-                        else img_src
+                    insert_image(
+                        document, img_src, description=child.get("alt", "Изображение")
                     )
-                    insert_image(document, img_path)
                 else:
                     paragraph.add_run(str(child))
         elif element.name == "ul":
             process_list_element(
                 element,
                 document,
-                content_directory,
                 current_heading_level,
                 processed_files,
                 list_type="bullet",
@@ -635,7 +635,6 @@ def convert_markdown_to_docx(
             process_list_element(
                 element,
                 document,
-                content_directory,
                 current_heading_level,
                 processed_files,
                 list_type="number",
@@ -656,6 +655,5 @@ def convert_markdown_to_docx(
 
 if __name__ == "__main__":
     root_directory = "."
-    content_directory = CONTENT_DIR
     output_docx_file = OUTPUT_FILE
-    convert_markdown_to_docx(root_directory, output_docx_file, content_directory)
+    convert_markdown_to_docx(root_directory, output_docx_file)
