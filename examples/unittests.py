@@ -6,7 +6,6 @@ UserId = int
 UserName = str
 User = Tuple[UserId, UserName]
 
-
 class Database:
     def __init__(self):
         self.data: Dict[UserId, User] = {}
@@ -26,7 +25,6 @@ class Database:
 
     def len(self) -> int:
         return len(self.data)
-
 
 class TestDatabase(unittest.TestCase):
     @classmethod
@@ -65,7 +63,6 @@ class TestDatabase(unittest.TestCase):
         result = mock_database.get(1)
         self.assertEqual(result, (1, "Kirill"))
         mock_database.get.assert_called_once_with(1)
-
 
 if __name__ == '__main__':
     unittest.main()

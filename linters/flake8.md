@@ -49,3 +49,4 @@ flake8 myscript.py
 - [Документация flake8](https://flake8.pycqa.org/en/latest/)
 - [PyPI flake8](https://pypi.org/project/flake8/)
 - [GitHub flake8](https://github.com/PyCQA/flake8)
+- [Плагин WPS для flake8](https://github.com/wemake-services/wemake-python-styleguide)

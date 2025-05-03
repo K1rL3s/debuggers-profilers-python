@@ -18,6 +18,5 @@ def too_much_conditions(a: int, b: int) -> int:
     breakpoint()
     return a ** 5
 
-
 for b in range(0, 6):
     too_much_conditions(2, b)

@@ -22,7 +22,7 @@
 В файлах `conftest.py` можно указать фикстуры, которые будут применены при запуске тестов.
 
 ## Примеры
-[py_tests.py](../examples/py_tests.py)
+[py_tests.py](../examples/pytests.py)
 
 ## Плюсы
 - Детальный анализ утверждений для облегчения отладки.
@@ -37,4 +37,4 @@
 
 ## Ссылки
 - [Официальная документация pytest](https://docs.pytest.org/en/stable/)
-- [Документация на docs-python.ru](https://docs-python.ru/packages/frejmvork-pytest/)
+- [Документация на docs-python.ru](https://docs-python.ru/packages/frejmvork-pytest)

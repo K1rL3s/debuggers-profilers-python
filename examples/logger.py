@@ -23,7 +23,6 @@ logger.warning("%s, %s, %s", tralalelo, bombordiro, brr_brr)
 00:51:35 - [WARNING] -  __main__ - (logger.py).<module>(19) - tralala, crocodilo, patapim
 """
 
-
 def calculator(a: int, b: int, operation: str) -> int | None:
     logger.debug("Переданные значения: a=%d, b=%d, operation=%s", a, b, operation)
 
@@ -42,7 +41,6 @@ def calculator(a: int, b: int, operation: str) -> int | None:
 
     logger.warning("Не нашёл подходящее действия для оператора %s возвращаю None", operation)
     return None
-
 
 calculator(1, 2, "+")
 calculator(3, 4, "-")

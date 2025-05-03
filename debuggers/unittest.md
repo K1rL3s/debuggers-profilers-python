@@ -22,7 +22,7 @@
 Создаются классы тестов, наследующие от `unittest.TestCase`. Определяются методы, начинающиеся с `test_`. Дальше используются методы-утверждения `assertEqual`, `assertTrue`, `assertRaises` для проверки поведения тестируемого объекта. Тесты запускаются с помощью `unittest.main()` или через командную строку с `python -m unittest`.
 
 ## Примеры
-[unit_tests.py](../examples/unit_tests.py)
+[unit_tests.py](../examples/unittests.py)
 
 ## Плюсы
 - Поддерживает автоматизацию тестов.
