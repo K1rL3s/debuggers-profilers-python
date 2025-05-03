@@ -133,6 +133,7 @@ def handle_link(
     level_increase: int,
     processed_files: Set[str],
     link_text: str,
+    heading_level: Optional[int] = None,
 ) -> bool:
     """Handle Markdown links to .py, .md files, or external URLs."""
     if href.endswith(PY_EXT):
@@ -148,14 +149,20 @@ def handle_link(
         md_path = os.path.join(base_path, href)
         if os.path.exists(md_path):
             heading_text = extract_h1_from_markdown(md_path, link_text)
-            heading = document.add_heading(heading_text, level=level_increase + 1)
-            format_heading(heading, level_increase + 1)
+            new_level = (
+                heading_level if heading_level is not None else level_increase + 1
+            )
+            heading = document.add_heading(heading_text, level=new_level)
+            format_heading(heading, new_level)
+            adjusted_level_increase = (
+                new_level if heading_level is not None else level_increase
+            )
             process_markdown(
                 md_path,
                 root_directory,
                 document,
                 content_directory,
-                level_increase=level_increase + 1,
+                level_increase=adjusted_level_increase,
                 skip_h1=True,
                 processed_files=processed_files,
             )
@@ -369,8 +376,41 @@ def process_markdown(
     for element in soup.children:
         if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
             level = int(element.name[1])
-            heading = document.add_heading(element.get_text(), level=level)
-            format_heading(heading, level)
+            heading_text = ""
+            has_md_link = False
+
+            for child in element.children:
+                if child.name == "a" and child.get("href", "").endswith(MD_EXT):
+                    href = child.get("href", "")
+                    link_text = child.get_text()
+                    paragraph = document.add_paragraph()
+                    handled = handle_link(
+                        href,
+                        os.path.dirname(markdown_file_path),
+                        document,
+                        paragraph,
+                        content_directory,
+                        root_directory,
+                        level_increase,
+                        processed_files,
+                        link_text,
+                        heading_level=level,
+                    )
+                    if handled:
+                        has_md_link = True
+                        if paragraph.text:
+                            document.paragraphs[-1]._element.getparent().remove(
+                                document.paragraphs[-1]._element
+                            )
+                else:
+                    heading_text += (
+                        str(child) if child.name is None else child.get_text()
+                    )
+
+            if heading_text or not has_md_link:
+                heading = document.add_heading(heading_text, level=level)
+                format_heading(heading, level)
+
         elif element.name == "p":
             paragraph = document.add_paragraph()
             for child in element.children:
@@ -469,11 +509,42 @@ def convert_markdown_to_docx(
 
     for element in soup.children:
         if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
-            current_heading_level = int(element.name[1])
-            heading = document.add_heading(
-                element.get_text(), level=current_heading_level
-            )
-            format_heading(heading, current_heading_level)
+            level = int(element.name[1])
+            heading_text = ""
+            has_md_link = False
+
+            for child in element.children:
+                if child.name == "a" and child.get("href", "").endswith(MD_EXT):
+                    href = child.get("href", "")
+                    link_text = child.get_text()
+                    paragraph = document.add_paragraph()
+                    handled = handle_link(
+                        href,
+                        root_directory,
+                        document,
+                        paragraph,
+                        content_directory,
+                        root_directory,
+                        current_heading_level,
+                        processed_files,
+                        link_text,
+                        heading_level=level,
+                    )
+                    if handled:
+                        has_md_link = True
+                        if paragraph.text:
+                            document.paragraphs[-1]._element.getparent().remove(
+                                document.paragraphs[-1]._element
+                            )
+                else:
+                    heading_text += (
+                        str(child) if child.name is None else child.get_text()
+                    )
+
+            if heading_text or not has_md_link:
+                heading = document.add_heading(heading_text, level=level)
+                format_heading(heading, level)
+
         elif element.name == "p":
             paragraph = document.add_paragraph()
             for child in element.children:
