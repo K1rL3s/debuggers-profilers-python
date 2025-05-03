@@ -2,9 +2,12 @@ tralalelo = "tralala"
 bombordiro = "crocodilo"
 brr_brr = "patapim"
 
-print(tralalelo, bombordiro, brr_brr)  # Вывод: tralala crocodilo patapim
-print(tralalelo, bombordiro, brr_brr, sep="---")  # Вывод: tralala---crocodilo---patapim
-print(tralalelo, bombordiro, brr_brr, sep=", ")  # Вывод: tralala, crocodilo, patapim
+print(tralalelo, bombordiro, brr_brr)
+# Вывод: tralala crocodilo patapim
+print(tralalelo, bombordiro, brr_brr, sep="---")
+# Вывод: tralala---crocodilo---patapim
+print(tralalelo, bombordiro, brr_brr, sep=", ")
+# Вывод: tralala, crocodilo, patapim
 
 print(tralalelo, end=", ")
 print(bombordiro, end=", ")
@@ -12,7 +15,8 @@ print(brr_brr)
 # Вывод: tralala, crocodilo, patapim
 
 with open("temp.txt", "w") as f:
-    print(tralalelo, bombordiro, brr_brr, sep=" | ", end=" = frigo camelo", file=f, flush=True)
+    print(tralalelo, bombordiro, brr_brr,
+        sep=" | ", end=" = frigo camelo", file=f, flush=True)
 # Содержимое файла temp.txt: tralala | crocodilo | patapim = frigo camelo
 
 def calculator(a: float, b: float, operation: str) -> float | None:
