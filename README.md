@@ -42,8 +42,6 @@
 
 [Jupyter Notebook](./debuggers/jupyter-notebook.md)
 
-[Eclipse с PyDev](./debuggers/eclipse-pydev.md)
-
 ### Профайлеры
 
 Профилирование — это процесс анализа работы программы для выявления узких мест и возможностей для оптимизации.
