@@ -38,11 +38,9 @@ end subroutine add
 - Подходит для научных вычислений.
 
 ## Минусы
-- Fortran-синтаксис сложен для Python-разработчиков.
+- Требует знание Fortran.
 - Управление двумя языками усложняет проект.
-- Отладка требует знаний Fortran.
 
 ## Ссылки
 - [Документация f2py](https://numpy.org/doc/stable/f2py/)
 - [Репозиторий GitHub NumPy](https://github.com/numpy/numpy)
-

@@ -34,9 +34,10 @@ static PyObject* my_function(PyObject* self, PyObject* args) {
 - Повторное использование существующего C-кода.
 
 ## Минусы
+- Требуется знание C.
 - Сложность управления C-кодом и компиляцией.
 - Отладка требует знаний C и Python.
-- Требует опыта работы с Python/C API.
+- Требуется опыта работы с Python/C API.
 
 ## Ссылки
 - [Документация Python/C API](https://docs.python.org/3/extending/extending.html)
