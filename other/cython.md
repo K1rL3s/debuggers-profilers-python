@@ -21,20 +21,14 @@ pip install Cython
 
 ## Использование
 Создайте файл `.pyx`, добавьте код с типами, скомпилируйте с помощью Cython и импортируйте как Python-модуль:
-```
-cythonize -i myscript.pyx
-```
 
 ## Примеры
-```cython
-# myscript.pyx
-def fib(int n):
-    cdef int a = 0, b = 1
-    for _ in range(n):
-        a, b = b, a + b
-    return a
-```
-Компилируйте и импортируйте в Python для ускоренного выполнения.
+[simple.c](../examples/c/simple.c)
+[simple.h](../examples/c/simple.h)
+
+[cython_file.pyx](../examples/c/cython_file.pyx)
+[cython_setup.py](../examples/c/cython_setup.py)
+[cython_run.py](../examples/c/cython_run.py)
 
 ## Плюсы
 - Значительное ускорение численных вычислений.

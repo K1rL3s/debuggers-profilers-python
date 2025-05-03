@@ -22,7 +22,7 @@
 
 [c_capi.c](../examples/c/capi.c)
 [c_capi_setup.py](../examples/c/capi_setup.py)
-[c_capi_file.py](../examples/c/capi_file.py)
+[c_capi_run.py](../examples/c/capi_run.py)
 
 ## Плюсы
 - Высокая производительность для численных задач.
