@@ -37,4 +37,4 @@
 
 ## Ссылки
 - [Официальная документация pytest](https://docs.pytest.org/en/stable/)
-- [Документация на docs-python.ru](https://docs-python.ru/packages/frejmvork-pytest/)
+- [Документация на docs-python.ru](https://docs-python.ru/packages/frejmvork-pytest)

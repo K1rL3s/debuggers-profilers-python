@@ -38,3 +38,4 @@ python -m timeit "5+5"
 
 ## Ссылки
 - [Официальная документация timeit](https://docs.python.org/3/library/timeit.html)
+- [Документация на docs-python.ru](https://docs-python.ru/standart-library/modul-timeit-python)

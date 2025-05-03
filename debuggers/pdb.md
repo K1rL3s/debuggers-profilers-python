@@ -52,4 +52,4 @@
 
 ## Ссылки
 - [Официальная документация pdb](https://docs.python.org/3/library/pdb.html)
-- [Документация на docs-python.ru](https://docs-python.ru/standart-library/modul-pdb-python/)
+- [Документация на docs-python.ru](https://docs-python.ru/standart-library/modul-pdb-python)
