@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from typing import Optional, Set
 
 import markdown
@@ -30,7 +31,7 @@ TABLE_STYLE = "Table Grid"
 MARKDOWN_EXTENSIONS = ["extra", "fenced_code", "tables"]
 README_FILE = "README.md"
 CONTENT_DIR = "./content"
-OUTPUT_FILE = "output.docx"
+OUTPUT_FILE = f"Lesovoy_{int(time.time())}.docx"
 MD_EXT = ".md"
 PY_EXT = ".py"
 CODE_BLOCK_SPACING = Pt(10)
