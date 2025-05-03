@@ -33,6 +33,11 @@ CONTENT_DIR = "./content"
 OUTPUT_FILE = f"Lesovoy_{int(time.time())}.docx"
 MD_EXT = ".md"
 PY_EXT = ".py"
+PYX_EXT = ".pyx"
+C_EXT = ".c"
+H_EXT = ".h"
+RS_EXT = ".rs"
+TOML_EXT = ".toml"
 CODE_BLOCK_SPACING = Pt(10)
 HEADING_BASE_SIZE = 28  # Base font size for H1 in points
 HEADING_SIZE_REDUCTION = 2  # Size reduction per heading level
@@ -40,6 +45,12 @@ ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
 ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
 ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
 MAX_HEADING_LEVEL = 6  # Maximum heading level
+
+CODE_EXTENSIONS = (PY_EXT, PYX_EXT, C_EXT, H_EXT, RS_EXT, TOML_EXT)
+
+
+def is_code_extension(filename: str) -> bool:
+    return any(filename.endswith(ext) for ext in CODE_EXTENSIONS)
 
 
 def configure_document_style(document: Document) -> None:
@@ -133,7 +144,7 @@ def handle_link(
     heading_level: Optional[int] = None,
 ) -> bool:
     """Handle Markdown links to .py, .md files, or external URLs."""
-    if href.endswith(PY_EXT):
+    if is_code_extension(href):
         py_path = os.path.join(base_path, href)
         if os.path.exists(py_path):
             with open(py_path, "r", encoding="utf-8") as f:
