@@ -17,18 +17,9 @@ pip install ruff
 ```
 
 ## Использование
-Запустите линтинг:
-```
-ruff check path/to/code/
-```
-Для автоматического исправления:
-```
-ruff check --fix path/to/code/
-```
-Форматирование кода:
-```
-ruff format path/to/code/
-```
+Запустите проверку: `ruff check path/to/code/`
+Для автоматического исправления: `ruff check --fix path/to/code/`
+Форматирование кода: `ruff format path/to/code/`
 
 ## Примеры
 ```bash
@@ -43,7 +34,6 @@ ruff check myscript.py
 - Поддержка монорепозиториев и интеграция с редакторами.
 
 ## Минусы
-- Высокая скорость может создавать ощущение, что инструмент не работает.
 - Относительно новый, поэтому сообщество и плагины менее развиты, чем у `flake8`.
 
 ## Ссылки
@@ -51,3 +41,4 @@ ruff check myscript.py
 - [PyPI ruff](https://pypi.python.org/pypi/ruff)
 - [Документация ruff](https://docs.astral.sh/ruff/)
 - [Интеграция VS Code](https://github.com/astral-sh/ruff-vscode)
+- [Интеграция Pycharm](https://plugins.jetbrains.com/plugin/20574-ruff)

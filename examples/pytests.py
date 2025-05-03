@@ -1,10 +1,8 @@
 import pytest
 
-
 UserId = int
 UserName = str
 User = tuple[UserId, UserName]
-
 
 class Database:
     def __init__(self):
@@ -31,7 +29,6 @@ class Database:
 def database() -> Database:
     return Database()
 
-
 def test_add_get_delete(database: Database) -> None:
     user = (1, "Kirill")
     database.add(user)
@@ -39,7 +36,6 @@ def test_add_get_delete(database: Database) -> None:
     assert database.delete(1) is True
     assert database.delete(1) is False
     assert database.get(1) is None
-
 
 @pytest.mark.parametrize(
     "user, count",

@@ -13,27 +13,19 @@
 `timeit` входит в стандартную библиотеку Python, установка не требуется.
 
 ## Использование
-Для измерения времени выражения:
+В коде:
 ```python
 import timeit
-timeit.timeit('5+5', number=1000000)
+print(timeit.timeit('5+5', number=1000000))
 ```
-Или через командную строку:
+Через командную строку:
 ```
 python -m timeit "5+5"
 ```
 
 ## Примеры
-```python
-import timeit
-
-def test_function():
-    return sum(x * 2 for x in range(1000))
-
-result = timeit.timeit(test_function, number=1000)
-print(f"Execution time: {result} seconds")
-```
-Вывод покажет время выполнения `test_function` за 1000 итераций.
+[timeit_list_comp.py](../examples/timeit_list_comp.py)
+<!-- ([timeit_RUF005.py](../examples/timeit_RUF005.py)) -->
 
 ## Плюсы
 - Простота использования для бенчмаркинга.

@@ -15,7 +15,6 @@ with open("temp.txt", "w") as f:
     print(tralalelo, bombordiro, brr_brr, sep=" | ", end=" = frigo camelo", file=f, flush=True)
 # Содержимое файла temp.txt: tralala | crocodilo | patapim = frigo camelo
 
-
 def calculator(a: float, b: float, operation: str) -> float | None:
     print("Переданные значения: a=", a, ", b=", b, ", operation=", operation, sep="")
 
@@ -34,7 +33,6 @@ def calculator(a: float, b: float, operation: str) -> float | None:
 
     print("Не нашёл подходящее действия для оператора", operation, "возвращаю None", end="\n\n")
     return None
-
 
 calculator(1, 2, "+")
 calculator(3, 4, "-")
