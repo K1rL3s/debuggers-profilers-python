@@ -14,6 +14,7 @@ from docx.shared import Cm, Inches, Pt, RGBColor
 
 FONT_NAME = "Times New Roman"
 FONT_SIZE = Pt(14)
+FIGURE_FONT_SIZE = Pt(10)
 CODE_FONT_NAME = "Courier New"
 CODE_FONT_SIZE = Pt(12)
 LINE_SPACING = 1.5
@@ -200,7 +201,7 @@ def insert_image(
     run = caption.add_run(f"Рисунок {FIGURE_COUNTER} - {description}")
     run.italic = True
     run.font.name = FONT_NAME
-    run.font.size = FONT_SIZE
+    run.font.size = FIGURE_FONT_SIZE
 
 
 def insert_table(document: Document, table_html: str) -> None:
@@ -520,7 +521,7 @@ def process_markdown(
         elif element.name == "pre":
             code = element.find("code")
             if code:
-                insert_code_block(document, code.get_text(), filename="code")
+                insert_code_block(document, code.get_text())
 
 
 def convert_markdown_to_docx(root_directory: str, output_docx: str) -> None:
@@ -644,7 +645,7 @@ def convert_markdown_to_docx(root_directory: str, output_docx: str) -> None:
         elif element.name == "pre":
             code = element.find("code")
             if code:
-                insert_code_block(document, code.get_text(), filename="code")
+                insert_code_block(document, code.get_text())
 
     document.save(output_docx)
     print(f"Document saved as {output_docx}")
