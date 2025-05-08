@@ -22,10 +22,9 @@ TOP_MARGIN = Cm(2.0)
 BOTTOM_MARGIN = Cm(2.0)
 LEFT_MARGIN = Cm(3.0)
 RIGHT_MARGIN = Cm(1.5)
-# FOOTER_DISTANCE = Cm(1.0)
 IMAGE_WIDTH = Inches(6)
 HYPERLINK_COLOR = RGBColor(0, 0, 255)
-HEADING_COLOR = RGBColor(0, 0, 0)  # Black color for headings
+HEADING_COLOR = RGBColor(0, 0, 0)
 TABLE_STYLE = "Table Grid"
 MARKDOWN_EXTENSIONS = ["extra", "fenced_code", "tables"]
 README_FILE = "README.md"
@@ -38,12 +37,12 @@ H_EXT = ".h"
 RS_EXT = ".rs"
 TOML_EXT = ".toml"
 CODE_BLOCK_SPACING = Pt(10)
-HEADING_BASE_SIZE = 26  # Base font size for H1 in points
-HEADING_SIZE_REDUCTION = 2  # Size reduction per heading level
+HEADING_BASE_SIZE = 26
+HEADING_SIZE_REDUCTION = 2
 ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
 ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
 ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
-MAX_HEADING_LEVEL = 6  # Maximum heading level
+MAX_HEADING_LEVEL = 6
 CODE_EXTENSIONS = (PY_EXT, PYX_EXT, C_EXT, H_EXT, RS_EXT, TOML_EXT)
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
@@ -114,13 +113,11 @@ def configure_document_style(document: Document) -> None:
     fld = OxmlElement("w:fldSimple")
     fld.set(qn("w:instr"), "PAGE")
     run._r.append(fld)
-    # section.footer_distance = FOOTER_DISTANCE
     section.different_first_page_header_footer = True
     document.sections[0].first_page_footer.paragraphs[0].text = ""
 
 
 def add_hyperlink(paragraph, url: str, text: str) -> None:
-    """Add a clickable hyperlink to a paragraph."""
     part = paragraph.part
     r_id = part.relate_to(
         url,
@@ -141,7 +138,6 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
 
 
 def format_heading(heading, level: int) -> None:
-    """Apply formatting to a heading paragraph."""
     for run in heading.runs:
         run.font.name = FONT_NAME
         run.font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
@@ -149,7 +145,6 @@ def format_heading(heading, level: int) -> None:
 
 
 def add_border_to_paragraph(paragraph) -> None:
-    """Add a border to a paragraph."""
     pPr = paragraph._p.get_or_add_pPr()
     pBdr = OxmlElement("w:pBdr")
     for border_name in ["w:top", "w:left", "w:bottom", "w:right"]:
@@ -163,17 +158,17 @@ def add_border_to_paragraph(paragraph) -> None:
 
 
 def insert_code_block(
-    document: Document, code_content: str, filename: str = "code"
+    document: Document,
+    code_content: str,
+    filename: str | None = None,
 ) -> None:
-    """Insert a code block with a border and a listing caption."""
     global LISTING_COUNTER
     LISTING_COUNTER += 1
 
-    # Add caption paragraph
     caption = document.add_paragraph()
-    caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = caption.add_run(f"Листинг {LISTING_COUNTER} - {filename}")
-    run.italic = True
+    caption.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    listing_text = f"Листинг {LISTING_COUNTER}" + f" - {filename}" if filename else ""
+    run = caption.add_run(listing_text)
     run.font.name = FONT_NAME
     run.font.size = FONT_SIZE
 
@@ -188,7 +183,6 @@ def insert_image(
     description: str = "Изображение",
     width: Inches = IMAGE_WIDTH,
 ) -> None:
-    """Insert an image with a figure caption."""
     global FIGURE_COUNTER
     if not os.path.exists(image_path):
         document.add_paragraph(ERROR_IMAGE_NOT_FOUND.format(image_path))
@@ -196,17 +190,17 @@ def insert_image(
 
     FIGURE_COUNTER += 1
 
+    paragraph = document.add_paragraph()
+    run = paragraph.add_run()
+    run.add_picture(image_path, width=width)
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
     caption = document.add_paragraph()
     caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = caption.add_run(f"Рисунок {FIGURE_COUNTER} - {description}")
     run.italic = True
     run.font.name = FONT_NAME
     run.font.size = FONT_SIZE
-
-    paragraph = document.add_paragraph()
-    run = paragraph.add_run()
-    run.add_picture(image_path, width=width)
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 
 def insert_table(document: Document, table_html: str) -> None:
@@ -263,7 +257,7 @@ def handle_link(
             new_level = (
                 heading_level if heading_level is not None else level_increase + 1
             )
-            new_level = min(new_level, MAX_HEADING_LEVEL)  # Limit to max level
+            new_level = min(new_level, MAX_HEADING_LEVEL)
             heading = document.add_heading(heading_text, level=new_level)
             format_heading(heading, new_level)
             adjusted_level_increase = (
@@ -294,7 +288,6 @@ def handle_link(
 def extract_h1_from_markdown(
     file_path: str, fallback_text: Optional[str] = None
 ) -> str:
-    """Extract the first H1 heading from a Markdown file or return a fallback."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             markdown_content = f.read()
@@ -402,7 +395,6 @@ def process_markdown(
     skip_h1: bool = False,
     processed_files: Optional[Set[str]] = None,
 ) -> None:
-    """Process a Markdown file and add its content to the document."""
     if processed_files is None:
         processed_files = set()
 
