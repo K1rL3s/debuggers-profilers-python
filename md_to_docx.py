@@ -21,8 +21,8 @@ FIRST_LINE_INDENT = Cm(1.5)
 TOP_MARGIN = Cm(2.0)
 BOTTOM_MARGIN = Cm(2.0)
 LEFT_MARGIN = Cm(3.0)
-RIGHT_MARGIN = Cm(1.0)
-FOOTER_DISTANCE = Cm(1.0)
+RIGHT_MARGIN = Cm(1.5)
+# FOOTER_DISTANCE = Cm(1.0)
 IMAGE_WIDTH = Inches(6)
 HYPERLINK_COLOR = RGBColor(0, 0, 255)
 HEADING_COLOR = RGBColor(0, 0, 0)  # Black color for headings
@@ -38,7 +38,7 @@ H_EXT = ".h"
 RS_EXT = ".rs"
 TOML_EXT = ".toml"
 CODE_BLOCK_SPACING = Pt(10)
-HEADING_BASE_SIZE = 28  # Base font size for H1 in points
+HEADING_BASE_SIZE = 26  # Base font size for H1 in points
 HEADING_SIZE_REDUCTION = 2  # Size reduction per heading level
 ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
 ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
@@ -114,7 +114,7 @@ def configure_document_style(document: Document) -> None:
     fld = OxmlElement("w:fldSimple")
     fld.set(qn("w:instr"), "PAGE")
     run._r.append(fld)
-    section.footer_distance = FOOTER_DISTANCE
+    # section.footer_distance = FOOTER_DISTANCE
     section.different_first_page_header_footer = True
     document.sections[0].first_page_footer.paragraphs[0].text = ""
 
