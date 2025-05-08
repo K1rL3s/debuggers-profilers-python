@@ -1,23 +1,23 @@
 # Титульные листы
 
-# [РЕФЕРАТ](./referat.md)
+# [РЕФЕРАТ](./main/referat.md)
 
 # СОДЕРЖАНИЕ
 
 Содержание из docx, вставить руками
 
-# [ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ](./terms_and_definitions.md)
+# [ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ](./main/terms_and_definitions.md)
 
-# [ПЕРЕЧЕНЬ СОКРАЩЕНИЙ И ОБОЗНАЧЕНИЙ](./abbreviations.md)
+# [ПЕРЕЧЕНЬ СОКРАЩЕНИЙ И ОБОЗНАЧЕНИЙ](./main/abbreviations.md)
 
 # Основная часть
 
-## [1. Научный поиск](./scientific_search.md)
+## [1. Научный поиск](./main/scientific_search.md)
 
-## [2. Ознакомление](./familiarization.md)
+## [2. Ознакомление](./main/familiarization.md)
 
-## [3. Тестирование и оценка результатов выполнения работы](./tests_final.md)
+## [3. Тестирование и оценка результатов выполнения работы](./main/tests_final.md)
 
-## [ЗАКЛЮЧЕНИЕ](./conclusion.md)
+## [ЗАКЛЮЧЕНИЕ](./main/conclusion.md)
 
-## [ПРИЛОЖЕНИЯ](./attachments.md)
+## [ПРИЛОЖЕНИЯ](./main/attachments.md)

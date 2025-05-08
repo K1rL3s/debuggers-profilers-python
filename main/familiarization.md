@@ -11,23 +11,23 @@
 Даже опытные программисты сталкиваются с ошибками, и эффективные инструменты отладки помогают быстрее находить их источник.
 В Python доступен широкий спектр методов и инструментов, от простых, таких как вывод сообщений в консоль, до продвинутых отладчиков в интегрированных средах разработки (IDE).
 
-### [pdb (Python Debugger)](./debuggers/pdb.md)
+### [pdb (Python Debugger)](../debuggers/pdb.md)
 
-### [print](./debuggers/print.md)
+### [print](../debuggers/print.md)
 
-### [logging](./debuggers/logging.md)
+### [logging](../debuggers/logging.md)
 
-### [pytest](./debuggers/pytest.md)
+### [pytest](../debuggers/pytest.md)
 
-### [unittest](./debuggers/unittest.md)
+### [unittest](../debuggers/unittest.md)
 
-### [Pycharm](./debuggers/pycharm.md)
+### [Pycharm](../debuggers/pycharm.md)
 
-### [VS Code](./debuggers/vscode.md)
+### [VS Code](../debuggers/vscode.md)
 
-### [IPython](./debuggers/ipython.md)
+### [IPython](../debuggers/ipython.md)
 
-### [Jupyter Notebook](./debuggers/jupyter-notebook.md)
+### [Jupyter Notebook](../debuggers/jupyter-notebook.md)
 
 ## Профайлеры
 
@@ -72,7 +72,7 @@
 В Python такие профайлеры могут собирать полные стектрейсы, что даёт более глубокое понимание происходящего в коде.
 
 
-### [py-spy](./profilers/py-spy.md)
+### [py-spy](../profilers/py-spy.md)
 
 
 ### Событийные профайлеры
@@ -97,15 +97,15 @@
 Удобные интерфейсы для анализа и обилие инструментов делают их популярными среди разработчиков.
 
 
-### [cProfile](./profilers/cProfile.md)
+### [cProfile](../profilers/cProfile.md)
 
-### [timeit](./profilers/timeit.md)
+### [timeit](../profilers/timeit.md)
 
-### [line_profiler](./profilers/line_profiler.md)
+### [line_profiler](../profilers/line_profiler.md)
 
-### [memory_profiler](./profilers/memory_profiler.md)
+### [memory_profiler](../profilers/memory_profiler.md)
 
-### [pyheat](./profilers/pyheat.md)
+### [pyheat](../profilers/pyheat.md)
 
 
 ## Линтеры
@@ -122,13 +122,13 @@
 Популярные линтеры для Python, такие как `flake8`, `pylint`, `ruff` или `mypy`, предлагают гибкую настройку под нужды проекта, поддерживая стандарты, такие как PEP 8.
 Использование линтеров помогает не только улучшить код, но и воспитать у разработчиков привычку писать аккуратный и надёжный код, что особенно важно в крупных и долгосрочных проектах.
 
-### [pylint](./linters/pylint.md)
+### [pylint](../linters/pylint.md)
 
-### [flake8](./linters/flake8.md)
+### [flake8](../linters/flake8.md)
 
-### [ruff](./linters/ruff.md)
+### [ruff](../linters/ruff.md)
 
-### [mypy](./linters/mypy.md)
+### [mypy](../linters/mypy.md)
 
 
 ## Остальное
@@ -137,12 +137,12 @@
 Эти технологии открывают новые возможности для оптимизации и анализа производительности программ.
 Они особенно полезны в высокопроизводительных вычислениях, где стандартные инструменты могут быть недостаточно эффективны, или в проектах, требующих глубокого взаимодействия с низкоуровневыми языками.
 
-### [PyPy](./other/pypy.md)
+### [PyPy](../other/pypy.md)
 
-### [Cython](./other/cython.md)
+### [Cython](../other/cython.md)
 
-### [Интеграция с C](./other/c.md)
+### [Интеграция с C](../other/c.md)
 
-### [Интеграция с Rust](./other/rust.md)
+### [Интеграция с Rust](../other/rust.md)
 
-### [Интеграция с Fortran](./other/fortran.md)
+### [Интеграция с Fortran](../other/fortran.md)
