@@ -166,7 +166,7 @@ def add_border_to_paragraph(paragraph) -> None:
 def insert_code_block(
     document: Document,
     code_content: str,
-    filename: str | None = None,
+    description: str | None = None,
 ) -> None:
     global LISTING_COUNTER
     LISTING_COUNTER += 1
@@ -174,8 +174,8 @@ def insert_code_block(
     caption = document.add_paragraph()
     caption.alignment = WD_ALIGN_PARAGRAPH.LEFT
     listing_text = f"Листинг {LISTING_COUNTER}"
-    if filename:
-        listing_text += f" - {filename}"
+    if description:
+        listing_text += f" - {description}"
     run = caption.add_run(listing_text)
     run.font.name = FONT_NAME
     run.font.size = FONT_SIZE
@@ -253,8 +253,7 @@ def handle_link(
         if os.path.exists(py_path):
             with open(py_path, "r", encoding="utf-8") as f:
                 code_content = f.read()
-            filename = os.path.basename(py_path)
-            insert_code_block(document, code_content, filename)
+            insert_code_block(document, code_content, description=link_text)
         else:
             paragraph.add_run(ERROR_PY_NOT_FOUND.format(href))
         return True
