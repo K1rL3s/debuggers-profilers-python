@@ -14,18 +14,9 @@
 `cProfile` входит в стандартную библиотеку Python, установка не требуется.
 
 ## Использование
-Для профилирования скрипта используйте команду:
-```
-python -m cProfile script.py
-```
-Или в коде:
-```python
-import cProfile
-cProfile.run('function()')
-```
+Для профилирования скрипта можно использовать команду `python -m cProfile script.py` или через код:
 
-## Примеры
-[cprofile.py](../examples/cprofile.py)
+[Работа с cProfile внутри программы](../examples/cprofile/short.txt)
 
 ## Плюсы
 - Высокая точность измерений.

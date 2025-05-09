@@ -1,0 +1,12 @@
+>>> import cProfile, re
+>>> cProfile.run('re.compile("foo|bar")', sort="ncalls")
+
+         231 function calls (224 primitive calls) in 0.001 seconds
+
+   Ordered by: call count
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       48    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+       34    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+    30/27    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+       18    0.000    0.000    0.000    0.000 _parser.py:168(__getitem__)

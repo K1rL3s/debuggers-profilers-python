@@ -38,8 +38,8 @@
 
 
 ## Примеры
-[pdb_breakpoints.py](../examples/pdb_breakpoints.py)
-[pdb_pm.py](../examples/pdb_pm.py)
+[pdb_breakpoints.py](../examples/pdb/breakpoints.py)
+[pdb_pm.py](../examples/pdb/pm.py)
 
 ## Плюсы
 - Не требует дополнительной установки.

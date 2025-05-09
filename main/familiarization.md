@@ -25,8 +25,6 @@
 
 ### [VS Code](../debuggers/vscode.md)
 
-### [IPython](../debuggers/ipython.md)
-
 ### [Jupyter Notebook](../debuggers/jupyter-notebook.md)
 
 ## Профайлеры

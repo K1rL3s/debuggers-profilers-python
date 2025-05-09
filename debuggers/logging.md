@@ -16,9 +16,7 @@
 
 ## Использование
 Создать логгер (`logging.getLogger(__name__)`), настроить его (`logging.basicConfig()`), использовать методы `debug()`, `info()`, `warning()`, `error()`, `critical()` для логгирования.
-
-## Примеры
-[logger.py](../examples/logger.py)
+[Использование logging](../examples/logging/short.py)
 
 ## Плюсы
 - Стандартизированное логирование по всему приложению.

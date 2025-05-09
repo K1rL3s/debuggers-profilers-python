@@ -13,19 +13,9 @@
 `timeit` входит в стандартную библиотеку Python, установка не требуется.
 
 ## Использование
-В коде:
-```python
-import timeit
-print(timeit.timeit('5+5', number=1000000))
-```
-Через командную строку:
-```
-python -m timeit "5+5"
-```
+[Использование timeit через код](../examples/timeit/code.py)
 
-## Примеры
-[timeit_list_comp.py](../examples/timeit_list_comp.py)
-<!-- ([timeit_RUF005.py](../examples/timeit_RUF005.py)) -->
+[Использование timeit через командную строку](../examples/timeit/cmd.txt)
 
 ## Плюсы
 - Простота использования для бенчмаркинга.
