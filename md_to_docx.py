@@ -17,8 +17,11 @@ FONT_SIZE = Pt(14)
 FIGURE_FONT_SIZE = Pt(10)
 CODE_FONT_NAME = "Courier New"
 CODE_FONT_SIZE = Pt(12)
+CODE_LINE_SPACING = 1.0
+CODE_FIRST_LINE_INDENT = 0
+PARAGRAPH_SPACE_BEFORE = Pt(0)
 LINE_SPACING = 1.5
-FIRST_LINE_INDENT = Cm(1.5)
+FIRST_LINE_INDENT = Cm(1.25)
 TOP_MARGIN = Cm(2.0)
 BOTTOM_MARGIN = Cm(2.0)
 LEFT_MARGIN = Cm(3.0)
@@ -68,6 +71,8 @@ def configure_document_style(document: Document) -> None:
     paragraph_format = style.paragraph_format
     paragraph_format.line_spacing = LINE_SPACING
     paragraph_format.first_line_indent = FIRST_LINE_INDENT
+    paragraph_format.space_after = PARAGRAPH_SPACE_BEFORE
+    paragraph_format.space_before = PARAGRAPH_SPACE_BEFORE
 
     for level in range(1, 6 + 1):
         heading_style = document.styles[f"Heading {level}"]
@@ -96,10 +101,10 @@ def configure_document_style(document: Document) -> None:
         code_style = document.styles["Code"]
     code_style.font.name = CODE_FONT_NAME
     code_style.font.size = CODE_FONT_SIZE
-    code_style.paragraph_format.line_spacing = 1.0
-    code_style.paragraph_format.space_before = Pt(0)
+    code_style.paragraph_format.line_spacing = CODE_LINE_SPACING
     code_style.paragraph_format.space_after = CODE_BLOCK_SPACING
-    code_style.paragraph_format.first_line_indent = Cm(0)
+    code_style.paragraph_format.space_before = PARAGRAPH_SPACE_BEFORE
+    code_style.paragraph_format.first_line_indent = CODE_FIRST_LINE_INDENT
 
     for section in document.sections:
         section.top_margin = TOP_MARGIN
@@ -168,7 +173,9 @@ def insert_code_block(
 
     caption = document.add_paragraph()
     caption.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    listing_text = f"Листинг {LISTING_COUNTER}" + f" - {filename}" if filename else ""
+    listing_text = f"Листинг {LISTING_COUNTER}"
+    if filename:
+        listing_text += f" - {filename}"
     run = caption.add_run(listing_text)
     run.font.name = FONT_NAME
     run.font.size = FONT_SIZE
