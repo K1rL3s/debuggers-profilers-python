@@ -14,7 +14,7 @@ from docx.shared import Cm, Inches, Pt, RGBColor
 
 FONT_NAME = "Times New Roman"
 FONT_SIZE = Pt(14)
-FIGURE_FONT_SIZE = Pt(10)
+FIGURE_FONT_SIZE = Pt(12)
 CODE_FONT_NAME = "Courier New"
 CODE_FONT_SIZE = Pt(12)
 CODE_LINE_SPACING = 1.0
@@ -26,7 +26,7 @@ TOP_MARGIN = Cm(2.0)
 BOTTOM_MARGIN = Cm(2.0)
 LEFT_MARGIN = Cm(3.0)
 RIGHT_MARGIN = Cm(1.5)
-IMAGE_WIDTH = Inches(6)
+IMAGE_WIDTH = Cm(16.5)
 HYPERLINK_COLOR = RGBColor(0, 0, 255)
 HEADING_COLOR = RGBColor(0, 0, 0)
 TABLE_STYLE = "Table Grid"
@@ -173,6 +173,7 @@ def insert_code_block(
 
     caption = document.add_paragraph()
     caption.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    caption.paragraph_format.first_line_indent = Cm(0)
     listing_text = f"Листинг {LISTING_COUNTER}"
     if description:
         listing_text += f" - {description}"
@@ -199,12 +200,14 @@ def insert_image(
     FIGURE_COUNTER += 1
 
     paragraph = document.add_paragraph()
+    paragraph.paragraph_format.first_line_indent = Cm(0)
     run = paragraph.add_run()
     run.add_picture(image_path, width=width)
     paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     caption = document.add_paragraph()
     caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    caption.paragraph_format.first_line_indent = Cm(0)
     run = caption.add_run(f"Рисунок {FIGURE_COUNTER} - {description}")
     run.italic = True
     run.font.name = FONT_NAME
