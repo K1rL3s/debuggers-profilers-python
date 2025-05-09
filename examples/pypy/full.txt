@@ -1,0 +1,15 @@
+>>> python
+Python 3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import timeit
+>>> timeit.timeit("sum(range(1000))")
+7.1561374000002616
+
+
+>>> pypy
+Python 3.11.11 (0253c85bf5f8, Feb 26 2025, 10:43:25)
+[PyPy 7.3.19 with MSC v.1941 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import timeit
+>>> timeit.timeit("sum(range(1000))")
+3.236320699999851
