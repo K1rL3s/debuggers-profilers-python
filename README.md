@@ -18,6 +18,6 @@
 
 ## [3. Тестирование и оценка результатов выполнения работы](./main/tests_final.md)
 
-## [ЗАКЛЮЧЕНИЕ](./main/conclusion.md)
+# [ЗАКЛЮЧЕНИЕ](./main/conclusion.md)
 
-## [ПРИЛОЖЕНИЯ](./main/attachments.md)
+# [ПРИЛОЖЕНИЯ](./main/attachments.md)
