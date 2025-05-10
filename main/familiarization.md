@@ -21,7 +21,7 @@
 
 ### [unittest](../debuggers/unittest.md)
 
-### [Pycharm](../debuggers/pycharm.md)
+### [PyCharm](../debuggers/pycharm.md)
 
 ### [VS Code](../debuggers/vscode.md)
 
