@@ -14,7 +14,7 @@ from docx.shared import Cm, Inches, Pt, RGBColor
 
 FONT_NAME = "Times New Roman"
 FONT_SIZE = Pt(14)
-FIGURE_FONT_SIZE = Pt(12)
+FIGURE_FONT_SIZE = Pt(14)
 CODE_FONT_NAME = "Courier New"
 CODE_FONT_SIZE = Pt(12)
 CODE_LINE_SPACING = 1.0
@@ -208,7 +208,7 @@ def insert_image(
     caption = document.add_paragraph()
     caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
     caption.paragraph_format.first_line_indent = Cm(0)
-    run = caption.add_run(f"Рисунок {FIGURE_COUNTER} - {description}")
+    run = caption.add_run(f"Рисунок {FIGURE_COUNTER} - {description}\n")
     run.italic = True
     run.font.name = FONT_NAME
     run.font.size = FIGURE_FONT_SIZE
