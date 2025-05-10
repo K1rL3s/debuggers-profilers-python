@@ -6,7 +6,7 @@
 |------------|-------------------------------------------------------------------------------------------------|
 | IDE        | Integrated Development Environment (Интегрированная среда разработки)                           |
 | pdb        | Python Debugger (Отладчик Python)                                                               |
-| PEP 8      | Python Enhancement Proposal 8 (Предложение по улучшению Python 8, стандарт стиля кода)          |
+| PEP8      | Python Enhancement Proposal 8 (Предложение по улучшению Python 8, стандарт стиля кода)          |
 | JIT        | Just-In-Time (Компиляция во время выполнения)                                                   |
 | CI/CD      | Continuous Integration/Continuous Deployment (Непрерывная интеграция/непрерывное развертывание) |
 | API        | Application Programming Interface (Программный интерфейс приложения)                            |
