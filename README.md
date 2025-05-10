@@ -6,13 +6,13 @@
 
 Содержание из docx, вставить руками
 
-# [ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ](./main/terms_and_definitions.md)
+# [ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ](./main/terms-and-definitions.md)
 
 # [ПЕРЕЧЕНЬ СОКРАЩЕНИЙ И ОБОЗНАЧЕНИЙ](./main/abbreviations.md)
 
 # Основная часть
 
-## [1. Научный поиск](./main/scientific_search.md)
+## [1. Научный поиск](./main/scientific-search.md)
 
 ## [2. Ознакомление](./main/familiarization.md)
 
