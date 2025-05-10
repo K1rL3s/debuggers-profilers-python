@@ -40,6 +40,7 @@ C_EXT = ".c"
 H_EXT = ".h"
 RS_EXT = ".rs"
 TOML_EXT = ".toml"
+TXT_EXT = ".txt"
 CODE_BLOCK_SPACING = Pt(10)
 HEADING_BASE_SIZE = 26
 HEADING_SIZE_REDUCTION = 2
@@ -47,7 +48,7 @@ ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
 ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
 ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
 MAX_HEADING_LEVEL = 6
-CODE_EXTENSIONS = (PY_EXT, PYX_EXT, C_EXT, H_EXT, RS_EXT, TOML_EXT)
+CODE_EXTENSIONS = (PY_EXT, PYX_EXT, C_EXT, H_EXT, RS_EXT, TOML_EXT, TXT_EXT)
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
 LISTING_COUNTER = 0
