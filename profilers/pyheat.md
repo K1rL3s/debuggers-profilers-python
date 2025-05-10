@@ -10,29 +10,16 @@
 - Поддержка прокрутки для больших файлов.
 
 ## Установка
-Установите из репозитория:
-```
-git clone https://github.com/csurfer/pyheat.git
-cd pyheat
-python setup.py install
-```
+Установка через pip: `pip install py-heat`
 
 ## Использование
-Для профилирования и просмотра тепловой карты:
-```
-pyheat <path_to_python_file>
-```
-Для сохранения в файл:
-```
-pyheat <path_to_python_file> --out image_file.png
-```
+Для профилирования и просмотра тепловой карты: `pyheat <path_to_python_file>`
 
-## Примеры
-Для файла `example.py`:
-```
-pyheat example.py
-```
-Это отобразит тепловую карту времени выполнения.
+Для сохранения в файл: `pyheat <path_to_python_file> --out filename.png`
+
+[Код для анализа с помощью pyheat](../examples/pyheat/short.py)
+
+[Выходное изображение pyheat](../content/pyheat.png)
 
 ## Плюсы
 - Интуитивная визуализация горячих зон кода.
@@ -41,6 +28,7 @@ pyheat example.py
 ## Минусы
 - Менее известен и потенциально менее поддерживаем.
 - Ограниченная функциональность по сравнению с другими профайлерами.
+- Устарел на текущий момент
 
 ## Ссылки
 - [GitHub pyheat](https://github.com/csurfer/pyheat)

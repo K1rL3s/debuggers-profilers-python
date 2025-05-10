@@ -18,13 +18,11 @@
 
 [Пример работа с timeit: сравнение списочных выражений и map с lambda](../examples/timeit/list_comp.py)
 
-[Пример работы с line_profiler]
+[Пример работы с line_profiler](../examples/line_profiler/full.txt)
 
-[Пример работы с memory_profiler]
+[Пример работы с memory_profiler](../examples/memory_profiler/full.txt)
 
 [Пример работы с pyheat]
-
-[Пример работы с pylint]
 
 [Пример работы с flake8]
 
