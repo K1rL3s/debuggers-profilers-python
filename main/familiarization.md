@@ -35,11 +35,11 @@
 
 ## Линтеры
 
-<--! ### [flake8](../linters/flake8.md) -->
+<!-- ### [flake8](../linters/flake8.md) -->
 
-<--! ### [ruff](../linters/ruff.md) -->
+<!-- ### [ruff](../linters/ruff.md) -->
 
-<--! ### [mypy](../linters/mypy.md) -->
+<!-- ### [mypy](../linters/mypy.md) -->
 
 
 ## Остальное
@@ -50,6 +50,6 @@
 
 ### [Интеграция с C](../other/c.md)
 
-<--! ### [Интеграция с Rust](../other/rust.md) -->
+<!-- ### [Интеграция с Rust](../other/rust.md) -->
 
-<--! ### [Интеграция с Fortran](../other/fortran.md) -->
+<!-- ### [Интеграция с Fortran](../other/fortran.md) -->
