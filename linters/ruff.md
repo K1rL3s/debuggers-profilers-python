@@ -41,4 +41,4 @@ ruff check myscript.py
 - [PyPI ruff](https://pypi.python.org/pypi/ruff)
 - [Документация ruff](https://docs.astral.sh/ruff/)
 - [Интеграция VS Code](https://github.com/astral-sh/ruff-vscode)
-- [Интеграция Pycharm](https://plugins.jetbrains.com/plugin/20574-ruff)
+- [Интеграция PyCharm](https://plugins.jetbrains.com/plugin/20574-ruff)
