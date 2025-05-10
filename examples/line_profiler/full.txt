@@ -1,0 +1,19 @@
+>>> kernprof -l short.py
+Wrote profile results to short.py.lprof
+Inspect results with:
+C:\Users\Kirill\AppData\Local\Programs\Python\Python312\python.exe -m line_profiler -rmt "short.py.lprof"
+
+>>> python -m line_profiler short.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 1.97951 s
+File: short.py
+Function: fibonacci at line 3
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+     3                                           @profile
+     4                                           def fibonacci(n):
+     5   2692537     487317.6      0.2     24.6      if n < 2:
+     6   1346269     232607.4      0.2     11.8          return n
+     7   1346268    1259582.0      0.9     63.6      return fibonacci(n - 1) + fibonacci(n - 2)
