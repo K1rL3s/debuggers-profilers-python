@@ -1,7 +1,7 @@
 # flake8
 
 ## Описание
-`flake8` - это инструмент для проверки стиля и качества Python-кода. Он объединяет `pycodestyle` (проверка PEP8), `pyflakes` (логические ошибки) и `mccabe` (сложность кода), предоставляя единый интерфейс для анализа кода.
+[`flake8`](https://flake8.pycqa.org/en/latest/) - это инструмент для проверки стиля и качества Python-кода. Он объединяет `pycodestyle` (проверка PEP8), `pyflakes` (логические ошибки) и `mccabe` (сложность кода), предоставляя единый интерфейс для анализа кода.
 
 ## Основные возможности
 - Проверка соответствия стандартам стиля (PEP8).
@@ -13,7 +13,6 @@
 Установка через pip: `pip install flake8`
 
 ## Использование
-Запустите `flake8` на файле или директории:
 [Использование flake8](../examples/flake8/short.txt)
 
 ## Плюсы
@@ -22,10 +21,4 @@
 - Поддержка плагинов для расширения функциональности.
 
 ## Минусы
-- Может требовать дополнительных плагинов для сложных проверок.
-
-## Ссылки
-- [Документация flake8](https://flake8.pycqa.org/en/latest/)
-- [PyPI flake8](https://pypi.org/project/flake8/)
-- [GitHub flake8](https://github.com/PyCQA/flake8)
-- [Плагин WPS для flake8](https://github.com/wemake-services/wemake-python-styleguide)
+- Может требовать дополнительных [плагинов](https://github.com/DmytroLitvinov/awesome-flake8-extensions) для сложных проверок.
