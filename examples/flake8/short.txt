@@ -1,0 +1,6 @@
+>>> flake8 ./examples/logging
+./examples/logging/full.py:26:1: E302 expected 2 blank lines, found 1
+./examples/logging/full.py:65:4: W292 no newline at end of file
+./examples/logging/short.py:3:21: E201 whitespace after '('
+>>> flake8 ./examples/memory_profiler/short.py
+./examples/memory_profiler/short.py:11:1: E305 expected 2 blank lines after class or function definition, found 1
