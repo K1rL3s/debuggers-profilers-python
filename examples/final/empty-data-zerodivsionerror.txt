@@ -1,0 +1,4 @@
+File "first_version.py", line 13, in calculate_mean
+  mean = total / len(data)
+         ~~~~~~^~~~~~~~~~~
+ZeroDivisionError: division by zero

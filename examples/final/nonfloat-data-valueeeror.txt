@@ -1,0 +1,4 @@
+File "first_version.py", line 6, in read_data
+  data = [float(row[0]) for row in reader]
+          ^^^^^^^^^^^^^
+ValueError: could not convert string to float: 'qwerty'

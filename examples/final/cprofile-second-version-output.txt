@@ -1,0 +1,9 @@
+>>> python -m cProfile second_version.py
+INFO:root:39.309911207994446
+200223976 function calls (200223699 primitive calls) in 39.314 seconds
+Ordered by: cumulative time
+ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     1   17.390   17.390   21.359   21.359 second_version.py:6(read_data)
+     1    0.000    0.000   11.130   11.130 second_version.py:36(calculate_std_dev)
+     2    3.852    1.926    3.852    1.926 second_version.py:20(calculate_mean)
+     1    0.000    0.000    3.529    3.529 second_version.py:27(calculate_median)
