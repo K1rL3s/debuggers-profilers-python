@@ -55,6 +55,17 @@ LISTING_COUNTER = 0
 FIGURE_COUNTER = 0
 
 
+def get_list_style(list_type: str, nesting_level: int) -> str:
+    if list_type == "bullet":
+        return (
+            f"List Bullet {nesting_level + 1}" if nesting_level > 0 else "List Bullet"
+        )
+    else:
+        return (
+            f"List Number {nesting_level + 1}" if nesting_level > 0 else "List Number"
+        )
+
+
 def is_code_extension(filename: str) -> bool:
     return any(filename.endswith(ext) for ext in CODE_EXTENSIONS)
 
@@ -75,7 +86,7 @@ def configure_document_style(document: Document) -> None:
     paragraph_format.space_after = PARAGRAPH_SPACE_BEFORE
     paragraph_format.space_before = PARAGRAPH_SPACE_BEFORE
 
-    for level in range(1, 6 + 1):
+    for level in range(1, 7):
         heading_style = document.styles[f"Heading {level}"]
         heading_font = heading_style.font
         heading_font.name = FONT_NAME
@@ -145,6 +156,7 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
 
 
 def format_heading(heading, level: int) -> None:
+    return
     for run in heading.runs:
         run.font.name = FONT_NAME
         run.font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
@@ -265,14 +277,16 @@ def handle_link(
         md_path = os.path.normpath(os.path.join(base_path, href))
         if os.path.exists(md_path):
             heading_text = extract_h1_from_markdown(md_path, link_text)
+            # Устанавливаем уровень для первого заголовка из файла
             new_level = (
                 heading_level if heading_level is not None else level_increase + 1
             )
             new_level = min(new_level, MAX_HEADING_LEVEL)
             heading = document.add_heading(heading_text, level=new_level)
             format_heading(heading, new_level)
+            # Передаем в process_markdown базовый уровень без дополнительного увеличения
             adjusted_level_increase = (
-                new_level if heading_level is not None else level_increase
+                new_level - 1 if heading_level is not None else level_increase
             )
             process_markdown(
                 md_path,
@@ -315,7 +329,7 @@ def extract_h1_from_markdown(
 
 def adjust_headers(html_content: str, level_increase: int) -> str:
     soup = BeautifulSoup(html_content, "html.parser")
-    for header in soup.find_all(re.compile("^h[1-9]$")):
+    for header in soup.find_all(re.compile("^h[1-6]$")):
         current_level = int(header.name[1])
         new_level = min(current_level + level_increase, MAX_HEADING_LEVEL)
         header.name = f"h{new_level}"
@@ -333,9 +347,8 @@ def process_list_element(
     root_directory: str,
 ) -> None:
     for li in list_element.find_all("li", recursive=False):
-        paragraph = document.add_paragraph(
-            style="List Bullet" if list_type == "bullet" else "List Number"
-        )
+        style_name = get_list_style(list_type, nesting_level)
+        paragraph = document.add_paragraph(style=style_name)
 
         for child in li.children:
             if child.name == "a":
@@ -425,12 +438,14 @@ def process_markdown(
         for h1 in soup.find_all("h1"):
             h1.decompose()
 
-    html_content = adjust_headers(str(soup), level_increase)
-    soup = BeautifulSoup(html_content, "html.parser")
+    # Убираем adjust_headers, так как уровень уже скорректирован в handle_link
+    # html_content = adjust_headers(str(soup), level_increase)
+    # soup = BeautifulSoup(html_content, "html.parser")
 
     for element in soup.children:
         if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
-            level = int(element.name[1])
+            level = int(element.name[1]) + level_increase  # Корректируем уровень здесь
+            level = min(level, MAX_HEADING_LEVEL)
             heading_text = ""
             has_md_link = False
 
