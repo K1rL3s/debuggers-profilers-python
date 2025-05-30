@@ -1,7 +1,8 @@
 import os
 import re
 import time
-from typing import Optional, Set
+from datetime import datetime
+from urllib.parse import urlparse
 
 import markdown
 from bs4 import BeautifulSoup
@@ -12,7 +13,6 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
 
-# Константы остаются без изменений
 FONT_NAME = "Times New Roman"
 FONT_SIZE = Pt(14)
 FIGURE_FONT_SIZE = Pt(14)
@@ -54,9 +54,9 @@ IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
 LISTING_COUNTER = 0
 FIGURE_COUNTER = 0
+REFERENCES: list[tuple[str, str]] = []
 
 
-# Функции, не связанные с обработкой заголовков, остаются без изменений
 def get_list_style(list_type: str, nesting_level: int) -> str:
     if list_type == "bullet":
         return (
@@ -96,7 +96,6 @@ def configure_document_style(document: Document) -> None:
         heading_font.color.rgb = HEADING_COLOR
         heading_font.bold = True if level <= 3 else False
 
-        # Убедимся, что стиль совместим с оглавлением
         rPr = heading_style.element.rPr
         if rPr is None:
             rPr = OxmlElement("w:rPr")
@@ -138,24 +137,17 @@ def configure_document_style(document: Document) -> None:
     document.sections[0].first_page_footer.paragraphs[0].text = ""
 
 
-def add_hyperlink(paragraph, url: str, text: str) -> None:
-    part = paragraph.part
-    r_id = part.relate_to(
-        url,
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
-        is_external=True,
-    )
+def add_footnote_reference(paragraph, link_text: str, url: str) -> None:
+    global REFERENCES
 
-    run = paragraph.add_run(text)
-    run.font.color.rgb = HYPERLINK_COLOR
-    run.font.underline = True
+    REFERENCES.append((link_text, url))
+    ref_number = len(REFERENCES)
 
-    run_xml = run._r
-    paragraph._p.remove(run_xml)
-    hyperlink = OxmlElement("w:hyperlink")
-    hyperlink.set(qn("r:id"), r_id)
-    hyperlink.append(run_xml)
-    paragraph._p.append(hyperlink)
+    paragraph.add_run(f"[{link_text}]")
+
+    run = paragraph.add_run(f"[{ref_number}]")
+    run.font.superscript = True
+    run.font.size = Pt(12)
 
 
 def format_heading(heading, level: int, document) -> None:
@@ -163,7 +155,6 @@ def format_heading(heading, level: int, document) -> None:
         run.font.name = FONT_NAME
         run.font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
         run.font.color.rgb = HEADING_COLOR
-        # Убедимся, что стиль сохраняет совместимость с оглавлением
         heading.style = document.styles[f"Heading {level}"]
 
 
@@ -264,9 +255,9 @@ def handle_link(
     paragraph,
     root_directory: str,
     level_increase: int,
-    processed_files: Set[str],
+    processed_files: set[str],
     link_text: str,
-    heading_level: Optional[int] = None,
+    heading_level: int | None = None,
 ) -> bool:
     if is_code_extension(href):
         py_path = os.path.normpath(os.path.join(base_path, href))
@@ -281,14 +272,12 @@ def handle_link(
         md_path = os.path.normpath(os.path.join(base_path, href))
         if os.path.exists(md_path):
             heading_text = extract_h1_from_markdown(md_path, link_text)
-            # Устанавливаем уровень для первого заголовка из файла
             new_level = (
                 heading_level if heading_level is not None else level_increase + 1
             )
             new_level = min(new_level, MAX_HEADING_LEVEL)
             heading = document.add_heading(heading_text, level=new_level)
             format_heading(heading, new_level, document)
-            # Передаем увеличение уровня для вложенного контента
             adjusted_level_increase = (
                 new_level - 1 if heading_level is not None else level_increase
             )
@@ -309,13 +298,13 @@ def handle_link(
         insert_image(document, image_path, description)
         return True
     elif href:
-        add_hyperlink(paragraph, href, link_text)
+        add_footnote_reference(paragraph, link_text, href)
         return True
     return False
 
 
 def extract_h1_from_markdown(
-    file_path: str, fallback_text: Optional[str] = None
+    file_path: str, fallback_text: str | None = None,
 ) -> str:
     try:
         with open(file_path, "r", encoding="utf-8") as f:
@@ -344,7 +333,7 @@ def process_list_element(
     list_element,
     document: Document,
     level_increase: int,
-    processed_files: Set[str],
+    processed_files: set[str],
     list_type: str,
     nesting_level: int,
     markdown_file_path: str,
@@ -421,7 +410,7 @@ def process_markdown(
     document: Document,
     level_increase: int = 0,
     skip_h1: bool = False,
-    processed_files: Optional[Set[str]] = None,
+    processed_files: set[str] | None = None,
 ) -> None:
     if processed_files is None:
         processed_files = set()
@@ -442,7 +431,6 @@ def process_markdown(
         for h1 in soup.find_all("h1"):
             h1.decompose()
 
-    # Применяем adjust_headers для корректного сдвига уровней
     html_content = adjust_headers(str(soup), level_increase)
     soup = BeautifulSoup(html_content, "html.parser")
 
@@ -552,7 +540,27 @@ def process_markdown(
                 insert_code_block(document, code.get_text())
 
 
+def add_references_section(document: Document) -> None:
+    if not REFERENCES:
+        return
+
+    heading = document.add_heading("Источники", level=1)
+    format_heading(heading, 1, document)
+
+    current_date = datetime.now().strftime("%d.%m.%Y")
+    for i, (link_text, url) in enumerate(REFERENCES, 1):
+        parsed_url = urlparse(url)
+        site_name = parsed_url.netloc if parsed_url.netloc else "Неизвестный сайт"
+        page_title = link_text if link_text else site_name
+        ref_text = f"[{i}] {page_title}. – URL: {url} (дата обращения: {current_date})."
+        paragraph = document.add_paragraph(ref_text)
+        paragraph.paragraph_format.first_line_indent = Cm(0)
+
+
 def convert_markdown_to_docx(root_directory: str, output_docx: str) -> None:
+    global REFERENCES
+    REFERENCES = []  # Очищаем список ссылок перед началом
+
     document = Document()
     configure_document_style(document)
 
@@ -674,6 +682,8 @@ def convert_markdown_to_docx(root_directory: str, output_docx: str) -> None:
             code = element.find("code")
             if code:
                 insert_code_block(document, code.get_text())
+
+    add_references_section(document)
 
     document.save(output_docx)
     print(f"Document saved as {output_docx}")
