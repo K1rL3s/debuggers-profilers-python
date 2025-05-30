@@ -12,6 +12,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Inches, Pt, RGBColor
 
+# Константы остаются без изменений
 FONT_NAME = "Times New Roman"
 FONT_SIZE = Pt(14)
 FIGURE_FONT_SIZE = Pt(14)
@@ -55,6 +56,7 @@ LISTING_COUNTER = 0
 FIGURE_COUNTER = 0
 
 
+# Функции, не связанные с обработкой заголовков, остаются без изменений
 def get_list_style(list_type: str, nesting_level: int) -> str:
     if list_type == "bullet":
         return (
@@ -94,6 +96,7 @@ def configure_document_style(document: Document) -> None:
         heading_font.color.rgb = HEADING_COLOR
         heading_font.bold = True if level <= 3 else False
 
+        # Убедимся, что стиль совместим с оглавлением
         rPr = heading_style.element.rPr
         if rPr is None:
             rPr = OxmlElement("w:rPr")
@@ -155,12 +158,13 @@ def add_hyperlink(paragraph, url: str, text: str) -> None:
     paragraph._p.append(hyperlink)
 
 
-def format_heading(heading, level: int) -> None:
-    return
+def format_heading(heading, level: int, document) -> None:
     for run in heading.runs:
         run.font.name = FONT_NAME
         run.font.size = Pt(HEADING_BASE_SIZE - level * HEADING_SIZE_REDUCTION)
         run.font.color.rgb = HEADING_COLOR
+        # Убедимся, что стиль сохраняет совместимость с оглавлением
+        heading.style = document.styles[f"Heading {level}"]
 
 
 def add_border_to_paragraph(paragraph) -> None:
@@ -283,8 +287,8 @@ def handle_link(
             )
             new_level = min(new_level, MAX_HEADING_LEVEL)
             heading = document.add_heading(heading_text, level=new_level)
-            format_heading(heading, new_level)
-            # Передаем в process_markdown базовый уровень без дополнительного увеличения
+            format_heading(heading, new_level, document)
+            # Передаем увеличение уровня для вложенного контента
             adjusted_level_increase = (
                 new_level - 1 if heading_level is not None else level_increase
             )
@@ -438,14 +442,13 @@ def process_markdown(
         for h1 in soup.find_all("h1"):
             h1.decompose()
 
-    # Убираем adjust_headers, так как уровень уже скорректирован в handle_link
-    # html_content = adjust_headers(str(soup), level_increase)
-    # soup = BeautifulSoup(html_content, "html.parser")
+    # Применяем adjust_headers для корректного сдвига уровней
+    html_content = adjust_headers(str(soup), level_increase)
+    soup = BeautifulSoup(html_content, "html.parser")
 
     for element in soup.children:
         if element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
-            level = int(element.name[1]) + level_increase  # Корректируем уровень здесь
-            level = min(level, MAX_HEADING_LEVEL)
+            level = int(element.name[1])
             heading_text = ""
             has_md_link = False
 
@@ -478,7 +481,7 @@ def process_markdown(
 
             if heading_text or not has_md_link:
                 heading = document.add_heading(heading_text, level=level)
-                format_heading(heading, level)
+                format_heading(heading, level, document)
 
         elif element.name == "p":
             paragraph = document.add_paragraph()
@@ -604,7 +607,7 @@ def convert_markdown_to_docx(root_directory: str, output_docx: str) -> None:
 
             if heading_text or not has_md_link:
                 heading = document.add_heading(heading_text, level=level)
-                format_heading(heading, level)
+                format_heading(heading, level, document)
 
         elif element.name == "p":
             paragraph = document.add_paragraph()
