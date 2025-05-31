@@ -42,6 +42,7 @@ H_EXT = ".h"
 RS_EXT = ".rs"
 TOML_EXT = ".toml"
 TXT_EXT = ".txt"
+INI_EXT = ".ini"
 CODE_BLOCK_SPACING = Pt(10)
 HEADING_BASE_SIZE = 26
 HEADING_SIZE_REDUCTION = 2
@@ -49,7 +50,7 @@ ERROR_PY_NOT_FOUND = "[Python file not found: {}]"
 ERROR_MD_NOT_FOUND = "[Markdown file not found: {}]"
 ERROR_IMAGE_NOT_FOUND = "[Image not found: {}]"
 MAX_HEADING_LEVEL = 6
-CODE_EXTENSIONS = (PY_EXT, PYX_EXT, C_EXT, H_EXT, RS_EXT, TOML_EXT, TXT_EXT)
+CODE_EXTENSIONS = (PY_EXT, PYX_EXT, C_EXT, H_EXT, RS_EXT, TOML_EXT, TXT_EXT, INI_EXT)
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
 LISTING_COUNTER = 0
@@ -143,11 +144,11 @@ def add_footnote_reference(paragraph, link_text: str, url: str) -> None:
     REFERENCES.append((link_text, url))
     ref_number = len(REFERENCES)
 
-    paragraph.add_run(f"[{link_text}]")
+    paragraph.add_run(f"{link_text}")
 
     run = paragraph.add_run(f"[{ref_number}]")
     run.font.superscript = True
-    run.font.size = Pt(12)
+    run.font.size = Pt(13)
 
 
 def format_heading(heading, level: int, document) -> None:
