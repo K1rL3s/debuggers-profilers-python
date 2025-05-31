@@ -12,8 +12,6 @@
 
 [Пример работы с unittest](../examples/unittest/full.py)
 
-<!-- [Пример работы с py-spy] -->
-
 [Пример работы с cProfile](../examples/cprofile/full.py)
 
 [Пример работа с timeit: сравнение списочных выражений и map с lambda](../examples/timeit/list_comp.py)

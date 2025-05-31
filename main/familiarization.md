@@ -20,8 +20,6 @@
 
 ## Профайлеры
 
-### [py-spy](../profilers/py-spy.md)
-
 ### [cProfile](../profilers/cProfile.md)
 
 ### [timeit](../profilers/timeit.md)
